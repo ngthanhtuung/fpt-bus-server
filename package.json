@@ -19,7 +19,9 @@
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
     "path": "^0.12.7",
-    "rotating-file-stream": "^3.0.4"
+    "rotating-file-stream": "^3.0.4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.0"
   },
   "devDependencies": {
     "ndb": "^1.1.5"
