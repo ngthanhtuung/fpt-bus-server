@@ -21,7 +21,6 @@ var accessLogStream = rfs.createStream(generatorFileDate, {
     path: path.join('src', `logger/${process.env.NODE_ENV || 'production'}`)
 })
 
-
 const writeLog = () => {
    return morgan(':method :url :status :response-time ms - :res[content-length] :date', { stream: accessLogStream })
 }
