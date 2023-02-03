@@ -14,6 +14,6 @@ const options = {
             },
         ],
     },
-    apis: ["../routers/root.router.js"],
+    apis: ['./src/routers/*.js','./src/models/*.js'],
 };
 module.exports = options;

@@ -35,7 +35,7 @@ const rootRouter = Router();
 
 /**
  * @swagger
- * /books:
+ * /api/v1/books:
  *   get:
  *     summary: Returns the list of all the books
  *     tags: [Books]
