@@ -33,11 +33,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Route.belongsToMany(models.Station, { through: "route_station" });
-      models.Station.belongsToMany(models.Route, { through: "route_station" });
+      models.Route.belongsToMany(models.Station, { through: "Route_Station" });
+      models.Station.belongsToMany(models.Route, { through: "Route_Station" });
     }
   }
-  route_station.init(
+  Route_Station.init(
     {
       route_id: DataTypes.UUID,
       station_id: DataTypes.UUID,

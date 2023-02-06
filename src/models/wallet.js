@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Wallet.hasMany(models.Transaction, { foreignKey: "wallet_id" });
       Wallet.belongsTo(models.WalletTypes, { foreignKey: "wallet_type_id" });
-      Wallet.belongsTo(models.User, { foreignKey: "user_id" });
+      Wallet.belongsTo(models.Users, { foreignKey: "user_id" });
     }
   }
   Wallet.init(

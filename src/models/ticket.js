@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Ticket.hasMany(models.Transaction, { foreignKey: "ticket_id" });
       Ticket.belongsTo(models.Trip, { foreignKey: "trip_id" });
-      Ticket.belongsTo(models.User, { foreignKey: "user_id" });
+      Ticket.belongsTo(models.Users, { foreignKey: "user_id" });
     }
   }
   Ticket.init(
