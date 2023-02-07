@@ -8,6 +8,15 @@ const options = require("./src/config/swaggerConfig");
 const specs = swaggerJsdoc(options);
 const app = express();
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 const corsOpts = {
   origin: "*",
   methods: ["GET", "POST", "UPDATE", "PATCH", "DELETE"],
