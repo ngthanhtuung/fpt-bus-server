@@ -8,9 +8,15 @@ const options = require("./src/config/swaggerConfig");
 const specs = swaggerJsdoc(options);
 const app = express();
 
+const corsOpts = {
+  origin: "*",
+  methods: ["GET", "POST", "UPDATE", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+};
+
 require("dotenv").config();
 app.use(writeLog()); //Customize write log middleware
-app.use(cors());
+app.use(cors(corsOpts));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}\public`));
