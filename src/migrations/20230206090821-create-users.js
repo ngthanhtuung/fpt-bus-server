@@ -11,24 +11,28 @@ module.exports = {
       },
       fullname: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       phone_number: {
         type: Sequelize.STRING,
+        allowNull: true,
       },
       student_id: {
         type: Sequelize.STRING,
       },
       status: {
         type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       role_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: "RoleType",
+          model: "RoleTypes",
           key: "id",
         },
       },

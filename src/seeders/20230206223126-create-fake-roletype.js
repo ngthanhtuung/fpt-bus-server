@@ -12,14 +12,19 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    return queryInterface.bulkInsert("RoleType", [
+    return queryInterface.bulkInsert("RoleTypes", [
       {
-        role_name: "Admin",
+        role_name: "ADMIN",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        role_name: "Student",
+        role_name: "STUDENT",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        role_name: "DRIVER",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -33,6 +38,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    return queryInterface.bulkDelete("roletypes", null, {});
+    return queryInterface.bulkDelete("RoleTypes", null, {});
   },
 };

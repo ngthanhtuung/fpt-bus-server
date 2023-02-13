@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
    *         role_type: Student
    *         status: true
    */
-  class RoleType extends Model {
+  class RoleTypes extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -34,18 +34,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      RoleType.hasMany(models.Users, { foreignKey: "role_id" });
+      RoleTypes.hasMany(models.Users, { foreignKey: "role_id" });
     }
   }
-  RoleType.init(
+  RoleTypes.init(
     {
       role_name: DataTypes.STRING,
       status: DataTypes.BOOLEAN,
     },
     {
       sequelize,
-      modelName: "RoleType",
+      modelName: "RoleTypes",
     }
   );
-  return RoleType;
+  return RoleTypes;
 };
