@@ -1,42 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  /**
-   * @swagger
-   * components:
-   *   schemas:
-   *     Trip:
-   *       type: object
-   *       required:
-   *         - id
-   *         - route_id
-   *         - departure_time
-   *         - bus_id
-   *         - ticket_quantity
-   *       properties:
-   *         id:
-   *          type: string
-   *          description: The auto-generated id of the trip
-   *         route_id:
-   *           type: string
-   *           description: The id of the route
-   *         departure_time:
-   *           type: string
-   *           description: The departure time of the trip
-   *         bus_id:
-   *           type: string
-   *           description: The id of the bus
-   *         ticket_quantity:
-   *           type: integer
-   *           description: The quantity of tickets
-   *       example:
-   *         id: 1
-   *         route_id: "4eb76978-2c07-47ea-87eb-d4484c5c3acd"
-   *         departure_time: "2021-05-01 12:00:00"
-   *         bus_id: "4eb76978-2c07-47ea-87eb-d4484c5c3acd"
-   *         ticket_quantity: 50
-   */
-
   class Trip extends Model {
     /**
      * Helper method for defining associations.

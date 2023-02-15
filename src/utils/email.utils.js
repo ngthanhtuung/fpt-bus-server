@@ -6,6 +6,12 @@ const getStudentId = (email) => {
   return studentId;
 };
 
+const checkEmailDomain = (email, listDomain) => {
+  const domain = email.substring(email.lastIndexOf("@") + 1);
+  return listDomain.includes(domain);
+};
+
 module.exports = {
   getStudentId,
+  checkEmailDomain,
 };

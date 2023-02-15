@@ -1,31 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  /**
-   * @swagger
-   * components:
-   *   schemas:
-   *     WalletTypes:
-   *       type: object
-   *       required:
-   *         - id
-   *         - type_name
-   *         - status
-   *       properties:
-   *         id:
-   *          type: integer
-   *          description: The auto-generated id of the wallet type
-   *         type_name:
-   *           type: string
-   *           description: The name of the wallet type
-   *         status:
-   *          type: boolean
-   *          description: The status of the wallet type
-   *       example:
-   *         id: 1
-   *         type_name: Momo
-   *         status: true
-   */
   class WalletTypes extends Model {
     /**
      * Helper method for defining associations.

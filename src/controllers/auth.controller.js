@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
-const { getStudentId } = require("../utils/email.utils");
+const { getStudentId, checkEmailDomain } = require("../utils/email.utils");
 const { Users, RoleTypes } = require("../models");
 const { v4: uuidv4 } = require("uuid");
+
 require("dotenv").config();
 
 const createAccessToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET);
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 const signIn = async (req, res) => {
@@ -47,7 +48,13 @@ const signIn = async (req, res) => {
         },
       });
     } else {
-      signUp(req, res);
+      checkEmailDomain(googlePayload.email, ["fpt.edu.vn"])
+        ? signUp(req, res)
+        : res.status().json({
+            status: "Fail",
+            messages:
+              "Please contact your administrator to support your account!",
+          });
     }
   } catch (err) {
     res.status(500).json({

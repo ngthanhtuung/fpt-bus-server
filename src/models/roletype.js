@@ -1,31 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  /**
-   * @swagger
-   * components:
-   *   schemas:
-   *     RoleTypes:
-   *       type: object
-   *       required:
-   *         - id
-   *         - role_name
-   *         - status
-   *       properties:
-   *         id:
-   *          type: integer
-   *          description: The auto-generated id of the role type
-   *         role_name:
-   *           type: string
-   *           description: The name of the role type
-   *         status:
-   *          type: boolean
-   *          description: The status of the role type
-   *       example:
-   *         id: 1
-   *         role_type: Student
-   *         status: true
-   */
   class RoleTypes extends Model {
     /**
      * Helper method for defining associations.
