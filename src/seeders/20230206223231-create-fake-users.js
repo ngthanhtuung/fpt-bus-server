@@ -24,6 +24,17 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id: "4eb76978-2c07-47ea-87eb-d4484c5b6acd",
+        fullname: "Nguyễn Hoàng Tân",
+        email: "tannhse151046@fpt.edu.vn",
+        phone_number: "0868999999",
+        student_id: "SE151046",
+        status: true,
+        role_id: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 

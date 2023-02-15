@@ -1,32 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  /**
-   * @swagger
-   * components:
-   *   schemas:
-   *     RoleTypes:
-   *       type: object
-   *       required:
-   *         - id
-   *         - role_name
-   *         - status
-   *       properties:
-   *         id:
-   *          type: integer
-   *          description: The auto-generated id of the role type
-   *         role_name:
-   *           type: string
-   *           description: The name of the role type
-   *         status:
-   *          type: boolean
-   *          description: The status of the role type
-   *       example:
-   *         id: 1
-   *         role_type: Student
-   *         status: true
-   */
-  class RoleType extends Model {
+  class RoleTypes extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -34,18 +9,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      RoleType.hasMany(models.Users, { foreignKey: "role_id" });
+      RoleTypes.hasMany(models.Users, { foreignKey: "role_id" });
     }
   }
-  RoleType.init(
+  RoleTypes.init(
     {
       role_name: DataTypes.STRING,
       status: DataTypes.BOOLEAN,
     },
     {
       sequelize,
-      modelName: "RoleType",
+      modelName: "RoleTypes",
     }
   );
-  return RoleType;
+  return RoleTypes;
 };

@@ -1,21 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const writeLog = require("./src/middlewares/writeLog");
-const swaggerJsdoc = require("swagger-jsdoc");
+const docs = require("./src/config/docs");
 const swaggerUi = require("swagger-ui-express");
 const rootRouter = require("./src/routers/root.router");
-const options = require("./src/config/swaggerConfig");
-const specs = swaggerJsdoc(options);
 const app = express();
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
 
 const corsOpts = {
   origin: "*",
@@ -33,7 +22,7 @@ app.use(express.static(`${__dirname}\public`));
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(specs, { explorer: true })
+  swaggerUi.setup(docs, { explorer: true })
 );
 
 app.use("/api/v1", rootRouter);
