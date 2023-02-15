@@ -35,6 +35,7 @@ const signIn = async (req, res) => {
         email: userLogin.email,
         phone_number: userLogin.phone_number,
         student_id: userLogin.student_id,
+        profile_img: userLogin.profile_img,
         status: userLogin.status,
         role_name: userLogin.RoleType.role_name,
       };
@@ -76,6 +77,7 @@ const signUp = async (req, res) => {
       fullname: googlePayload.name,
       email: googlePayload.email,
       student_id: getStudentId(googlePayload.email),
+      profile_img: googlePayload.picture,
       createdAt: new Date(),
       updartedAt: new Date(),
       status: true,
@@ -92,6 +94,7 @@ const signUp = async (req, res) => {
           email: user.email,
           phone_number: user.phone_number,
           student_id: user.student_id,
+          profile_img: user.profile_img,
           status: user.status,
           role_name: role.role_name,
         };
