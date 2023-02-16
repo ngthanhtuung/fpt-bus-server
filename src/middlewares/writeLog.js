@@ -22,7 +22,7 @@ var accessLogStream = rfs.createStream(generatorFileDate, {
 })
 
 const writeLog = () => {
-   return morgan(':method :url :status :response-time ms - :res[content-length] :date', { stream: accessLogStream })
+    return morgan(':method :url :status :response-time ms - :res[content-length] :date', { stream: accessLogStream })
 }
 
 module.exports = writeLog;
