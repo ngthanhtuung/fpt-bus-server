@@ -4,7 +4,7 @@ module.exports = {
         description: "API for user sign in to the system",
         requestBody: {
             name: "UploadFile",
-            description: "Type: profile, qrCode , imageBase64: data:image/jpeg;base64,/9j..., idUser:uuid",
+            description: "Type: profile, qrCode , imageBase64: data:image/jpeg;base64,/9j..., userId:uuid",
             content: {
                 "application/json": {
                     schema: {
@@ -17,7 +17,7 @@ module.exports = {
                             imageBase64: {
                                 type: "string"
                             },
-                            idUser: {
+                            userId: {
                                 type: "string"
                             }
                         },
