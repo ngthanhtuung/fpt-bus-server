@@ -12,5 +12,9 @@ module.exports = {
       name: "Files",
       description: "File image upload Firebase Storage",
     },
+    {
+      name: "Notification",
+      description: "Notification related routes",
+    },
   ],
 };
