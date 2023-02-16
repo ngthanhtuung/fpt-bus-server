@@ -8,5 +8,9 @@ module.exports = {
       name: "Users",
       description: "User related routes",
     },
+    {
+      name: "Files",
+      description: "File image upload Firebase Storage",
+    },
   ],
 };
