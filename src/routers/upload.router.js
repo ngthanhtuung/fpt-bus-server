@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const { uploadFile } = require("../controllers/upload.controller");
 const {
   authenticate,
   authorize,
@@ -6,6 +7,6 @@ const {
 
 const uploadRouter = Router();
 
-uploadRouter.get("/", [authenticate, authorize(["ADMIN"])]);
+uploadRouter.post("/", [], uploadFile);
 
 module.exports = uploadRouter;
