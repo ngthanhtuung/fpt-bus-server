@@ -10,10 +10,12 @@ const TransactionType = require("./models/transactiontype.docs");
 const Wallet = require("./models/wallet.docs");
 const WalletType = require("./models/wallettype.docs");
 const Trip = require("./models/trip.docs");
+const Users = require("./models/users.docs");
 
 module.exports = {
   components: {
     schemas: {
+      ...Users,
       ...Bus,
       ...RoleType,
       ...Route_Station,
@@ -23,7 +25,6 @@ module.exports = {
       ...Ticket,
       ...Transaction,
       ...TransactionType,
-      ...Wallet,
       ...WalletType,
       ...Trip,
     },

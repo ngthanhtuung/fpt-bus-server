@@ -23,6 +23,10 @@ module.exports = {
         type: "string",
         description: "The student id of the user",
       },
+      profile_img: {
+        type: "string",
+        description: "The profile image of the user",
+      },
       status: {
         type: "boolean",
         description: "The status of the user",

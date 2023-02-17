@@ -24,6 +24,9 @@ module.exports = {
       student_id: {
         type: Sequelize.STRING,
       },
+      profile_img: {
+        type: Sequelize.STRING,
+      },
       status: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,

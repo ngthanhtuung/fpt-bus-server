@@ -1,9 +1,15 @@
-const { initializeApp } = require('firebase/app');
-const { getStorage, ref, uploadString, getDownloadURL } = require('firebase/storage');
-const moment = require('moment-timezone');
-const firebaseConfig = require('../config/firebase.config');
+const { initializeApp } = require("firebase/app");
+const {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} = require("firebase/storage");
+const moment = require("moment-timezone");
+const firebaseConfig = require("../config/firebase.config");
 initializeApp(firebaseConfig);
 const uploadFile = async (req, res) => {
+
     try {
         // get image from body
         const { type, imageBase64, userId } = req.body
@@ -44,10 +50,14 @@ const uploadFile = async (req, res) => {
             }
         })
     } catch (error) {
-        console.log(error);
-    }
+        res.status(500).json({
+          status: 'Fail',
+          message: error.message
+        })
+     }
+
 };
 
 module.exports = {
-    uploadFile,
+  uploadFile,
 };
