@@ -6,8 +6,8 @@ initializeApp(firebaseConfig);
 const uploadFile = async (req, res) => {
     try {
         // get image from body
-        const { type, imageBase64, idUser } = req.body
-        console.log("type: ", type, ", imageBase64: ", imageBase64,",idUser: ", idUser);
+        const { type, imageBase64, userId } = req.body
+        console.log("type: ", type, ", imageBase64: ", imageBase64,",idUser: ", userId);
         //check input param
         if (type === undefined || imageBase64 === undefined) {
             return res.status(400).json({
@@ -23,11 +23,11 @@ const uploadFile = async (req, res) => {
         switch (type) {
             case "profile":
                 //reference to bucket and folder
-                storageRef = ref(storage, `profile/profile-user-${timeNow}-${idUser}`);
+                storageRef = ref(storage, `profile/profile-user-${timeNow}-${userId}`);
                 break;
             case "qrCode":
                 //reference to bucket and folder
-                storageRef = ref(storage, `qr-code/qr-code-${timeNow}-${idUser}`)
+                storageRef = ref(storage, `qr-code/qr-code-${timeNow}-${userId}`)
                 break;
         }
         //use uploadString method to upload image
