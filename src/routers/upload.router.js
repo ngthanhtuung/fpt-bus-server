@@ -7,6 +7,6 @@ const {
 
 const uploadRouter = Router();
 
-uploadRouter.post("/", [authenticate], uploadFile);
+uploadRouter.post("/", authenticate, uploadFile);
 
 module.exports = uploadRouter;
