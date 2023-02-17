@@ -4,9 +4,10 @@ const {
   authenticate,
   authorize,
 } = require("../middlewares/auth/verify-token.middleware");
+const { checkDataCache } = require("../middlewares/cache/checkDataCache.middleware");
 
 const userRouter = Router();
 
-userRouter.get("/", [authenticate, authorize(["ADMIN"])], findAllUser);
+userRouter.get("/:key", [checkDataCache], findAllUser);
 
 module.exports = userRouter;
