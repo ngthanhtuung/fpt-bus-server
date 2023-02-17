@@ -1,4 +1,9 @@
-const firebaseConfig = require("../config/firebase.config");
+const admin = require("firebase-admin");
+const fcm = require("fcm-notification");
+const serviceAccount = require("../config/firebase-notification");
+
+const certPath = admin.credential.cert(serviceAccount);
+const FCM = new fcm(certPath);
 
 const pushNoti = async (req, res) => {
   const { title, content, token, topic } = req.body;
@@ -16,23 +21,20 @@ const pushNoti = async (req, res) => {
       },
       token: token,
     };
-    await firebase
-      .messaging()
-      .send(message)
-      .then((response) => {
-        res.status(200).json({
+
+    FCM.send(message, (err, response) => {
+      if (err) {
+        return res.status(500).json({
+          status: "Fail",
+          message: err.message,
+        });
+      } else {
+        return res.status(200).json({
           status: "Success",
           message: "Notification sent successfully!",
-          response,
         });
-      })
-      .catch((error) => {
-        res.status(500).json({
-          status: "Fail",
-          message: "Notification sent failed!",
-          error,
-        });
-      });
+      }
+    });
   }
 };
 
