@@ -2,15 +2,16 @@ module.exports = {
   get: {
     tags: ["Users"],
     description: "API for managing users",
-    parameters: {
-      key: {
-        name: "key",
-        in: "path",
-        description: "Key of redis",
-        required: true,
+    parameters: [
+      // expected params.
+      {
+        name: "key", // name of the param
+        in: "path", // location of the param
+        required: true, // Mandatory param
+        description: "key value of redis", // param desc.
         type: "string",
       },
-    },
+    ],
     responses: {
       200: {
         description: "Get all user successfully",

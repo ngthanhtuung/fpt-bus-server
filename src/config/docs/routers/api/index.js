@@ -11,7 +11,7 @@ module.exports = {
     },
 
     //User API
-    "/api/v1/users": {
+    "/api/v1/users/:key": {
       ...getUsers,
     },
     //Upload File
