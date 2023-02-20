@@ -7,8 +7,8 @@ const api = require("./routers/api");
 
 module.exports = {
   ...basicInfo,
-  ...servers,
   ...components,
+  ...servers,
   ...security,
   ...tags,
   ...api,

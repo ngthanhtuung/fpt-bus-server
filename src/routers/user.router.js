@@ -1,5 +1,9 @@
 const { Router } = require("express");
-const { findAllUser } = require("../controllers/user.controller");
+const { auth } = require("firebase-admin");
+const {
+  findAllUser,
+  findUserByRole,
+} = require("../controllers/user.controller");
 const {
   authenticate,
   authorize,
@@ -10,9 +14,11 @@ const {
 
 const userRouter = Router();
 
+userRouter.get("/search", [authenticate, authorize(["ADMIN"])], findUserByRole);
 userRouter.get(
   "/:key",
-  [authenticate, authorize(["ADMIN"]), checkDataCache],
+  [authenticate, authorize(["ADMIN"])],
+  checkDataCache,
   findAllUser
 );
 

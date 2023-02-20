@@ -14,6 +14,13 @@ const Users = require("./models/users.docs");
 
 module.exports = {
   components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
     schemas: {
       ...Users,
       ...Bus,
@@ -27,16 +34,6 @@ module.exports = {
       ...TransactionType,
       ...WalletType,
       ...Trip,
-    },
-    securitySchemes: {
-      bearerAuth: {
-        type: "http",
-        in: "header",
-        name: "Authentication",
-        description: "Bearer Token",
-        scheme: "bearer",
-        bearerFormat: "JWT",
-      },
     },
   },
 };

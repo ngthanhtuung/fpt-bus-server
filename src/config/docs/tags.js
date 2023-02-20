@@ -16,5 +16,13 @@ module.exports = {
       name: "Notification",
       description: "Notification related routes",
     },
+    {
+      name: "Bus",
+      description: "Bus related routes",
+    },
+    {
+      name: "Station",
+      description: "Station related routes",
+    },
   ],
 };
