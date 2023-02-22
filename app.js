@@ -9,14 +9,14 @@ const app = express();
 const corsOpts = {
   origin: "*",
   methods: ["GET", "POST", "UPDATE", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["*"],
 };
 
 require("dotenv").config();
 app.use(writeLog()); //Customize write log middleware
 app.use(cors(corsOpts));
-app.use(express.json({ limit: '900mb' }));
-app.use(express.urlencoded({ limit: '900mb', extended: true }));
+app.use(express.json({ limit: "900mb" }));
+app.use(express.urlencoded({ limit: "900mb", extended: true }));
 app.use(express.static(`${__dirname}\public`));
 app.use(
   "/api-docs",
