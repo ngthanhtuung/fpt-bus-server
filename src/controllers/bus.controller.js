@@ -49,14 +49,52 @@ const getAllBus = async (req, res) => {
   }
 };
 
+const getABus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const bus = await Bus.findOne({
+      where: { id },
+      include: [
+        {
+          model: Users,
+          attributes: ["fullname"],
+        },
+      ],
+    });
+    bus
+      ? res.status(200).json({
+          status: "Success",
+          message: "Get a bus successfully!",
+          data: bus,
+        })
+      : res.status(404).json({
+          status: "Fail",
+          message: "Bus not found!",
+        });
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    });
+  }
+};
+
 const createBus = async (req, res) => {
   try {
     const { license_plate, seat_quantity, driver_id } = req.body;
     const errors = validate(license_plate, seat_quantity, driver_id);
+    const checkDuplicate = await Bus.findOne({
+      where: { license_plate: license_plate },
+    });
     if (Object.keys(errors).length > 0) {
       res.status(400).json({
         status: "Fail",
         message: errors,
+      });
+    } else if (checkDuplicate) {
+      res.status(400).json({
+        status: "Fail",
+        message: "License plate already exists!",
       });
     } else {
       const bus = await Bus.create({
@@ -133,8 +171,56 @@ const updateBus = async (req, res) => {
   }
 };
 
+const changeStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const bus = await Bus.findOne({
+      where: { id },
+    });
+    if (bus) {
+      await Bus.update(
+        {
+          status: !bus.status,
+          updatedAt: new Date(),
+        },
+        {
+          where: { id },
+        }
+      ).then(() => {
+        Bus.findByPk(id).then((bus) => {
+          if (bus.status === false) {
+            res.status(200).json({
+              status: "Success",
+              message: "Bus is disabled!",
+              data: bus,
+            });
+          } else {
+            res.status(200).json({
+              status: "Success",
+              message: "Bus is enabled!",
+              data: bus,
+            });
+          }
+        });
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Bus not found!",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   getAllBus,
+  getABus,
   createBus,
   updateBus,
+  changeStatus,
 };

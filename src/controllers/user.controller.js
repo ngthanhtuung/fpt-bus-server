@@ -24,7 +24,6 @@ const findAllUser = async (req, res) => {
     res.status(200).json({
       status: "Success",
       messages: "Get all user successfully!",
-      length: userList.length,
       isCache: false,
       data: {
         userList,

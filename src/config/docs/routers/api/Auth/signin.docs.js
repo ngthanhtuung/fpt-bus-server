@@ -3,6 +3,7 @@ module.exports = {
     tags: ["Authentication"],
     description: "API for user sign in to the system",
     requestBody: {
+      required: true,
       name: "accessToken",
       description: "User credentials",
       content: {
