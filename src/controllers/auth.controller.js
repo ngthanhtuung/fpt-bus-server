@@ -51,7 +51,7 @@ const signIn = async (req, res) => {
     } else {
       checkEmailDomain(googlePayload.email, ["fpt.edu.vn"])
         ? signUp(req, res)
-        : res.status().json({
+        : res.status(400).json({
             status: "Fail",
             messages:
               "Please contact your administrator to support your account!",

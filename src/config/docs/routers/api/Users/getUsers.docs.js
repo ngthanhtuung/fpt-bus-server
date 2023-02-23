@@ -1,8 +1,5 @@
 module.exports = {
   get: {
-    security: {
-      bearerAuth: [],
-    },
     tags: ["Users"],
     description: "API for managing users",
     parameters: [
