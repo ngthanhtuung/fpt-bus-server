@@ -1,5 +1,5 @@
 module.exports = {
-  post: {
+  get: {
     tags: ["Bus"],
     security: [
       {

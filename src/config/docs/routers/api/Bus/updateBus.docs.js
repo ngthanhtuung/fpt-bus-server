@@ -33,6 +33,9 @@ module.exports = {
               driver_id: {
                 type: "string",
               },
+              status: {
+                type: "boolean",
+              },
             },
           },
         },
