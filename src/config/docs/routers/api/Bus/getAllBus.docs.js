@@ -1,6 +1,11 @@
 module.exports = {
   get: {
     tags: ["Bus"],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     description: "API for getting all bus",
     responses: {
       200: {

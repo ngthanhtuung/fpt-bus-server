@@ -1,6 +1,11 @@
 module.exports = {
   post: {
     tags: ["Files"],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     description: "API for upload file to firebase storage",
     requestBody: {
       name: "UploadFile",

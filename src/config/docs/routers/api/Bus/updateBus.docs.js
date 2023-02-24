@@ -1,6 +1,11 @@
 module.exports = {
   post: {
     tags: ["Bus"],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     description: "API for update an existed bus",
     parameters: [
       {
@@ -27,6 +32,9 @@ module.exports = {
               },
               driver_id: {
                 type: "string",
+              },
+              status: {
+                type: "boolean",
               },
             },
           },

@@ -15,7 +15,7 @@ module.exports = {
       ...signin,
     },
     //User API
-    "/api/v1/users/:key": {
+    "/api/v1/users/{key}": {
       ...getUsers,
     },
     //Upload File
@@ -30,16 +30,16 @@ module.exports = {
     "/api/v1/bus": {
       ...getAllBus,
     },
-    "/api/v1/bus/:id": {
+    "/api/v1/bus/{id}": {
       ...getABus,
     },
     "/api/v1/bus/create": {
       ...createBus,
     },
-    "/api/v1/bus/update/:id": {
+    "/api/v1/bus/update/{id}": {
       ...updateBus,
     },
-    "/api/v1/bus/change-status/:id": {
+    "/api/v1/bus/change-status/{id}": {
       ...changeStatus,
     },
   },

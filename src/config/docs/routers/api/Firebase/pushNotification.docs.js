@@ -1,6 +1,11 @@
 module.exports = {
   post: {
     tags: ["Notification"],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     description: "Send notification to device",
     requestBody: {
       name: "Notification",
