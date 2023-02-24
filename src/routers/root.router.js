@@ -11,4 +11,5 @@ rootRouter.use("/users", userRouter);
 rootRouter.use("/upload-file", uploadRouter);
 rootRouter.use("/notification", notiRouter);
 rootRouter.use("/bus", busRouter);
+
 module.exports = rootRouter;

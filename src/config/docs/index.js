@@ -9,7 +9,7 @@ module.exports = {
   ...basicInfo,
   ...components,
   ...servers,
-  ...security,
+  // ...security,
   ...tags,
   ...api,
 };

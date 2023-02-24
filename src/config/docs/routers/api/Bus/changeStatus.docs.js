@@ -1,6 +1,11 @@
 module.exports = {
   post: {
     tags: ["Bus"],
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     description: "API for changing status of bus (ENABLE or DISABLE)",
     parameters: [
       {
