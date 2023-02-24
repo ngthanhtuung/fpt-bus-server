@@ -37,7 +37,6 @@ const findAllUser = async (req, res) => {
 const findUserByRole = async (req, res) => {
   try {
     const roleName = req.query.roleName.toUpperCase();
-    console.log("Finding role name: ", roleName);
     const userList = await Users.findAll({
       include: [
         {
