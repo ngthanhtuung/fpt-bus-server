@@ -3,10 +3,13 @@ const getUsers = require("./Users/getUsers.docs");
 const uploadFile = require("./Firebase/uploadFile.docs");
 const pushNotification = require("./Firebase/pushNotification.docs");
 const getAllBus = require("./Bus/getAllBus.docs");
-const getABus = require("./Bus/getABus.docs");
 const createBus = require("./Bus/createBus.docs");
 const updateBus = require("./Bus/updateBus.docs");
 const changeStatus = require("./Bus/changeStatus.docs");
+const getAllStation = require("./Station/getAllStation.docs");
+const createStation = require("./Station/createStation.docs");
+const updateStation = require("./Station/updateStation.docs");
+const changeStatusStation = require("./Station/changeStatusStation.docs");
 
 module.exports = {
   paths: {
@@ -15,7 +18,7 @@ module.exports = {
       ...signin,
     },
     //User API
-    "/api/v1/users/{key}": {
+    "/api/v1/users": {
       ...getUsers,
     },
     //Upload File
@@ -26,12 +29,9 @@ module.exports = {
     "/api/v1/notification": {
       ...pushNotification,
     },
-    // //Bus API
+    //Bus API
     "/api/v1/bus": {
       ...getAllBus,
-    },
-    "/api/v1/bus/{id}": {
-      ...getABus,
     },
     "/api/v1/bus/create": {
       ...createBus,
@@ -41,6 +41,20 @@ module.exports = {
     },
     "/api/v1/bus/change-status/{id}": {
       ...changeStatus,
+    },
+
+    //Station API
+    "/api/v1/station": {
+      ...getAllStation,
+    },
+    "/api/v1/station/create": {
+      ...createStation,
+    },
+    "/api/v1/station/update/{id}": {
+      ...updateStation,
+    },
+    "/api/v1/station/change-status/{id}": {
+      ...changeStatusStation,
     },
   },
 };

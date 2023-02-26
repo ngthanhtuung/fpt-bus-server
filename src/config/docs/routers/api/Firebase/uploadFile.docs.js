@@ -1,6 +1,6 @@
 module.exports = {
   post: {
-    tags: ["Files"],
+    tags: ["Firebase Service"],
     security: [
       {
         bearerAuth: [],

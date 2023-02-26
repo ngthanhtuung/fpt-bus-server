@@ -1,29 +1,29 @@
 module.exports = {
   get: {
-    tags: ["Bus"],
+    tags: ["Station"],
     security: [
       {
         bearerAuth: [],
       },
     ],
+    description: "Get all station",
     parameters: [
       {
-        name: "license_plate",
+        name: "station_name",
         in: "query",
+        description: "Station name",
         required: false,
-        description: "Bus's license plate",
       },
       {
-        name: "fullname",
+        name: "status",
         in: "query",
+        description: "Station status",
         required: false,
-        description: "Driver's fullname",
       },
     ],
-    description: "API for getting all bus",
     responses: {
       200: {
-        description: "Get all bus successfully!",
+        description: "Get all station successfully",
         content: {
           "application/json": {
             schema: {
@@ -35,7 +35,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Get all bus successfully!",
+                  example: "Get all station successfully!",
                 },
                 data: {
                   type: "array",
@@ -44,19 +44,19 @@ module.exports = {
                     properties: {
                       id: {
                         type: "string",
-                        example: "5c526cde-a31b-4ee3-94c7-9c42cbdfd0dd",
+                        example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
                       },
-                      license_plate: {
+                      station_name: {
                         type: "string",
-                        example: "29B-144.21",
+                        example: "University of Transportation",
                       },
-                      seat_quantity: {
-                        type: "number",
-                        example: 30,
-                      },
-                      driver_id: {
+                      longitude: {
                         type: "string",
-                        example: "67c8d25a-6caf-4192-9f0a-d44de8d45461",
+                        example: "106.7919828",
+                      },
+                      latitude: {
+                        type: "string",
+                        example: "10.8457017",
                       },
                       status: {
                         type: "boolean",
@@ -64,43 +64,14 @@ module.exports = {
                       },
                       createdAt: {
                         type: "string",
-                        example: "2023-02-22T05:23:14.000Z",
+                        example: "2021-02-22T05:23:14.000Z",
                       },
-                      updatedAt: {
+                      updadtedAt: {
                         type: "string",
-                        example: "2023-02-22T05:44:35.000Z",
-                      },
-                      User: {
-                        type: "object",
-                        properties: {
-                          fullname: {
-                            type: "string",
-                            example: "Nguyen Van A",
-                          },
-                        },
+                        example: "2021-02-22T05:44:35.000Z",
                       },
                     },
                   },
-                },
-              },
-            },
-          },
-        },
-      },
-      400: {
-        description: "Bus list is empty!",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                status: {
-                  type: "string",
-                  example: "Fail",
-                },
-                message: {
-                  type: "string",
-                  example: "Bus list is empty!",
                 },
               },
             },
@@ -147,8 +118,8 @@ module.exports = {
           },
         },
       },
-      500: {
-        description: "Server error",
+      404: {
+        description: "Station list is empty",
         content: {
           "application/json": {
             schema: {
@@ -160,7 +131,27 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Server error",
+                  example: "Station list is empty",
+                },
+              },
+            },
+          },
+        },
+      },
+      500: {
+        description: "Internal server error",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  example: "Fail",
+                },
+                message: {
+                  type: "string",
+                  example: "Internal server error",
                 },
               },
             },
