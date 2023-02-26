@@ -20,6 +20,7 @@ const authorize = (arrayRole) => (req, res, next) => {
   try {
     const { user } = req;
     if (arrayRole.includes(user.role_name)) {
+      req.role_name = user.role_name;
       next();
     } else {
       res.status(403).json({

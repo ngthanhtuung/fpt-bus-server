@@ -9,12 +9,8 @@ module.exports = {
       description: "User related routes",
     },
     {
-      name: "Files",
-      description: "File image upload Firebase Storage",
-    },
-    {
-      name: "Notification",
-      description: "Notification related routes",
+      name: "Firebase Service",
+      description: "Firebase related routes",
     },
     {
       name: "Bus",

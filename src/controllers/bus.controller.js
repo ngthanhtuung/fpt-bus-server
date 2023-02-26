@@ -1,6 +1,7 @@
 const { v4: uuid } = require("uuid");
 const validator = require("validator");
 const { Bus, Users } = require("../models");
+const Sequelize = require("sequelize");
 
 const checkLicensePlate = (license_plate) => {
   const regex = /^\d{2}[A-Z]-\d{3}\.\d{2}$/;
@@ -31,13 +32,39 @@ const validate = (license_plate, seat_quantity, driver_id) => {
 
 const getAllBus = async (req, res) => {
   try {
+    const queryParams = req.query;
+    const whereClause = {};
+    const includeOptions = [
+      {
+        model: Users,
+        attributes: ["fullname"],
+      },
+    ];
+
+    for (const property in queryParams) {
+      if (queryParams.hasOwnProperty(property)) {
+        const value = queryParams[property];
+        if (property === "license_plate") {
+          whereClause[property] = {
+            [Sequelize.Op.like]: `%${value}%`,
+          };
+        } else if (property === "status") {
+          whereClause[property] = value === "true";
+        } else if (property === "fullname") {
+          includeOptions[0].where = {
+            fullname: {
+              [Sequelize.Op.like]: `%${value}%`,
+            },
+          };
+        } else {
+          whereClause[property] = value;
+        }
+      }
+    }
+
     const busList = await Bus.findAll({
-      include: [
-        {
-          model: Users,
-          attributes: ["fullname"],
-        },
-      ],
+      where: whereClause,
+      include: includeOptions,
     });
     busList.length > 0
       ? res.status(200).json({
@@ -48,36 +75,6 @@ const getAllBus = async (req, res) => {
       : res.status(404).json({
           status: "Fail",
           message: "Bus list is empty!",
-        });
-  } catch (err) {
-    res.status(500).json({
-      status: "Fail",
-      message: err.message,
-    });
-  }
-};
-
-const getABus = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const bus = await Bus.findOne({
-      where: { id },
-      include: [
-        {
-          model: Users,
-          attributes: ["fullname"],
-        },
-      ],
-    });
-    bus
-      ? res.status(200).json({
-          status: "Success",
-          message: "Get a bus successfully!",
-          data: bus,
-        })
-      : res.status(404).json({
-          status: "Fail",
-          message: "Bus not found!",
         });
   } catch (err) {
     res.status(500).json({
@@ -227,7 +224,6 @@ const changeStatus = async (req, res) => {
 
 module.exports = {
   getAllBus,
-  getABus,
   createBus,
   updateBus,
   changeStatus,

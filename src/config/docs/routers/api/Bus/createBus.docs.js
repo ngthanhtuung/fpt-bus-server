@@ -115,6 +115,46 @@ module.exports = {
           },
         },
       },
+      401: {
+        description: "Unauthorized",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  example: "Fail",
+                },
+                message: {
+                  type: "string",
+                  example: "You are not logged into the system",
+                },
+              },
+            },
+          },
+        },
+      },
+      403: {
+        description: "Forbidden",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  example: "Fail",
+                },
+                message: {
+                  type: "string",
+                  example: "Access denied",
+                },
+              },
+            },
+          },
+        },
+      },
       500: {
         description: "Server error",
         content: {
