@@ -2,6 +2,11 @@ const { v4: uuid } = require("uuid");
 const validator = require("validator");
 const { Bus, Users } = require("../models");
 
+const checkLicensePlate = (license_plate) => {
+  const regex = /^\d{2}[A-Z]-\d{3}\.\d{2}$/;
+  return regex.test(license_plate);
+};
+
 const validate = (license_plate, seat_quantity, driver_id) => {
   const errors = {};
   if (!license_plate && !seat_quantity && !driver_id) {
@@ -9,6 +14,9 @@ const validate = (license_plate, seat_quantity, driver_id) => {
   } else {
     if (validator.isEmpty(license_plate)) {
       errors.license_plate = "License plate is required";
+    }
+    if (!checkLicensePlate(license_plate)) {
+      errors.license_plate = "License plate is not valid";
     }
     if (seat_quantity <= 0) {
       errors.seat_quantity =
