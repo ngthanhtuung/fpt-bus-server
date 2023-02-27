@@ -1,7 +1,6 @@
 const { v4: uuid } = require("uuid");
 const validator = require("validator");
-const { Bus, Users } = require("../models");
-const Sequelize = require("sequelize");
+const { Bus, Users, sequelize } = require("../models");
 
 const checkLicensePlate = (license_plate) => {
   const regex = /^(?!13|42)(1[1-9]|[2-9]\d)[A-Z]-\d{3}\.\d{2}$/;
@@ -29,50 +28,28 @@ const validate = (license_plate, seat_quantity, driver_id) => {
 
 const getAllBus = async (req, res) => {
   try {
-    const queryParams = req.query;
-    const whereClause = {};
-    const includeOptions = [
-      {
-        model: Users,
-        attributes: ["fullname"],
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const search_query = req.query.search_query || "";
+    const offset = (page - 1) * limit;
+    const numPage = Math.ceil((await Bus.count()) / limit);
+    const busList = await sequelize.query(
+      `SELECT bus.*, user.fullname AS driver_name
+      FROM fpt_bus.Bus bus LEFT JOIN fpt_bus.Users user ON bus.driver_id = user.id
+      WHERE user.fullname LIKE '%${search_query}%' OR bus.license_plate LIKE '%${search_query}%'
+      LIMIT ${limit} OFFSET ${offset};`
+    );
+    res.status(200).json({
+      status: "Success",
+      message: "Get all bus succesfully!",
+      pagination: {
+        total: busList[0].length,
+        limit,
+        page,
+        numPage,
       },
-    ];
-
-    for (const property in queryParams) {
-      if (queryParams.hasOwnProperty(property)) {
-        const value = queryParams[property];
-        if (property === "license_plate") {
-          whereClause[property] = {
-            [Sequelize.Op.like]: `%${value}%`,
-          };
-        } else if (property === "status") {
-          whereClause[property] = value === "true";
-        } else if (property === "fullname") {
-          includeOptions[0].where = {
-            fullname: {
-              [Sequelize.Op.like]: `%${value}%`,
-            },
-          };
-        } else {
-          whereClause[property] = value;
-        }
-      }
-    }
-
-    const busList = await Bus.findAll({
-      where: whereClause,
-      include: includeOptions,
+      data: busList[0],
     });
-    busList.length > 0
-      ? res.status(200).json({
-          status: "Success",
-          message: "Get all bus successfully!",
-          data: busList,
-        })
-      : res.status(404).json({
-          status: "Fail",
-          message: "Bus list is empty!",
-        });
   } catch (err) {
     res.status(500).json({
       status: "Fail",

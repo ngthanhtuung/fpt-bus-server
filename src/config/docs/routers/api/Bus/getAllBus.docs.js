@@ -8,16 +8,22 @@ module.exports = {
     ],
     parameters: [
       {
-        name: "license_plate",
+        name: "search_query",
         in: "query",
         required: false,
-        description: "Bus's license plate",
+        description: "Search key word",
       },
       {
-        name: "fullname",
+        name: "limit",
         in: "query",
         required: false,
-        description: "Driver's fullname",
+        description: "Limit number of bus",
+      },
+      {
+        name: "page",
+        in: "query",
+        required: false,
+        description: "Page number",
       },
     ],
     description: "API for getting all bus",

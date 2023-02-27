@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Route.hasMany(models.Trip, { foreignKey: "route_id" });
+      Route.belongsToMany(models.Station, { through: "Route_Station" });
     }
   }
   Route.init(
