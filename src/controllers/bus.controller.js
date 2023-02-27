@@ -3,13 +3,18 @@ const validator = require("validator");
 const { Bus, Users } = require("../models");
 const Sequelize = require("sequelize");
 
+const checkLicensePlate = (license_plate) => {
+  const regex = /^(?!13|42)(1[1-9]|[2-9]\d)[A-Z]-\d{3}\.\d{2}$/;
+  return regex.test(license_plate);
+};
+
 const validate = (license_plate, seat_quantity, driver_id) => {
   const errors = {};
   if (!license_plate && !seat_quantity && !driver_id) {
     errors.all = "All fields are required";
   } else {
-    if (validator.isEmpty(license_plate)) {
-      errors.license_plate = "License plate is required";
+    if (!checkLicensePlate(license_plate)) {
+      errors.license_plate = "License plate is not valid";
     }
     if (seat_quantity <= 0) {
       errors.seat_quantity =
