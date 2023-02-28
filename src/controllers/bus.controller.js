@@ -28,7 +28,7 @@ const validate = (license_plate, seat_quantity, driver_id) => {
 
 const getAllBus = async (req, res) => {
   try {
-    const page = req.query.page || 1;
+    const page = req.params.page || 1;
     const limit = req.query.limit || 10;
     const search_query = req.query.search_query || "";
     const offset = (page - 1) * limit;
