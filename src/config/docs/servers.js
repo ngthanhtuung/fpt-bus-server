@@ -5,5 +5,8 @@ module.exports = {
         process.env.PORT || 8888
       }`,
     },
+    {
+      url: `http://fpt-bus.online`,
+    },
   ],
 };
