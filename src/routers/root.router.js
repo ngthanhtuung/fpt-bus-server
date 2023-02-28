@@ -15,5 +15,6 @@ rootRouter.use("/upload-file", uploadRouter);
 rootRouter.use("/notification", notiRouter);
 rootRouter.use("/bus", busRouter);
 rootRouter.use("/station", stationRouter);
-rootRouter.use("/route", routerRouter);
+rootRouter.use("/route", routeRouter);
+
 module.exports = rootRouter;

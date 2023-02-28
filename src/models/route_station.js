@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Route.belongsToMany(models.Station, { through: "Route_Station" });
-      models.Station.belongsToMany(models.Route, { through: "Route_Station" });
+      // models.Route.belongsToMany(models.Station, { through: "Route_Station" });
+      // models.Station.belongsToMany(models.Route, { through: "Route_Station" });
     }
   }
   Route_Station.init(
