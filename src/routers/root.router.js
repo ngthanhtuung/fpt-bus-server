@@ -5,6 +5,8 @@ const uploadRouter = require("./upload.router");
 const userRouter = require("./user.router");
 const busRouter = require("./bus.router");
 const stationRouter = require("./station.router");
+const routerRouter = require("./route.router");
+
 const rootRouter = Router();
 
 rootRouter.use("/auth", authRouter);
@@ -13,5 +15,5 @@ rootRouter.use("/upload-file", uploadRouter);
 rootRouter.use("/notification", notiRouter);
 rootRouter.use("/bus", busRouter);
 rootRouter.use("/station", stationRouter);
-
+rootRouter.use("/route", routerRouter);
 module.exports = rootRouter;
