@@ -1,8 +1,8 @@
-const currentDate = () => {
-  const options = { timeZone: "Asia/Ho_Chi_Minh" };
-  const vietnamTime = new Date().toLocaleString("en-US", options);
-  const isoDate = new Date(vietnamTime);
+const moment = require("moment-timezone");
 
-  return isoDate.toISOString();
+const currentDate = () => {
+  const now = moment.tz("Asia/Ho_Chi_Minh");
+  const current = now.format("YYYY-MM-DD HH:mm:ss");
+  return current;
 };
 module.exports = currentDate;

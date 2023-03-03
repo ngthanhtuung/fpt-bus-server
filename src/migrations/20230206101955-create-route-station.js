@@ -25,6 +25,10 @@ module.exports = {
           key: "id",
         },
       },
+      station_index: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

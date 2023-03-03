@@ -15,4 +15,4 @@ const routeRouter = Router();
 routeRouter.get("/", [authenticate, authorize(["ADMIN"])], getAllRoutes);
 routeRouter.post("/create", [authenticate, authorize(["ADMIN"])], createRoute);
 
-module.exports = routerRouter;
+module.exports = routeRouter;

@@ -17,10 +17,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       route_id: DataTypes.UUID,
       station_id: DataTypes.UUID,
+      station_index: DataTypes.INTEGER,
     },
     {
       sequelize,
-      modelName: "route_station",
+      modelName: "Route_Station",
+      tableName: "Route_Stations",
     }
   );
   return Route_Station;

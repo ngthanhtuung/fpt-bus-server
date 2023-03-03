@@ -5,7 +5,7 @@ const uploadRouter = require("./upload.router");
 const userRouter = require("./user.router");
 const busRouter = require("./bus.router");
 const stationRouter = require("./station.router");
-const routerRouter = require("./route.router");
+const routeRouter = require("./route.router");
 
 const rootRouter = Router();
 
