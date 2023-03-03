@@ -10,6 +10,10 @@ const getAllStation = require("./Station/getAllStation.docs");
 const createStation = require("./Station/createStation.docs");
 const updateStation = require("./Station/updateStation.docs");
 const changeStatusStation = require("./Station/changeStatusStation.docs");
+const getAllRoute = require("./Route/getAllRoute.docs");
+const createRoute = require("./Route/createRoute.docs");
+const changeStatusRoute = require("./Route/changeStatusRoute.docs");
+const updateRoute = require("./Route/updateRoute.docs");
 
 module.exports = {
   paths: {
@@ -55,6 +59,20 @@ module.exports = {
     },
     "/api/v1/station/change-status/{id}": {
       ...changeStatusStation,
+    },
+
+    //Route API
+    "/api/v1/route": {
+      ...getAllRoute,
+    },
+    "/api/v1/route/create": {
+      ...createRoute,
+    },
+    "/api/v1/route/update/{id}": {
+      ...updateRoute,
+    },
+    "/api/v1/route/change-status/{id}": {
+      ...changeStatusRoute,
     },
   },
 };

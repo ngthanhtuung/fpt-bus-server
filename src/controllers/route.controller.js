@@ -71,15 +71,111 @@ const createRoute = async (req, res) => {
       `);
     }
 
-    route.stations = [];
-    const routesWithStations = await getStationsBelongToRoute(route.id);
-    route.stations.push(routesWithStations[0]);
+    const routeStation = await getStationsBelongToRoute(route.id);
+    const routeWithStations = {
+      id: route.id,
+      departure: route.departure,
+      destination: route.destination,
+      status: route.status,
+      createdAt: route.createdAt,
+      updatedAt: route.updatedAt,
+      stations: routeStation[0],
+    };
 
     res.status(201).json({
       status: "Success",
       message: "Route created successfully",
-      data: route,
+      data: routeWithStations,
     });
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    });
+  }
+};
+
+const updateRoute = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { start, end, stations, status } = req.body;
+    const updatedStartName = (await Station.findByPk(start)).station_name;
+    const updatedEndName = (await Station.findByPk(end)).station_name;
+    const route = await Route.findByPk(id);
+    if (route) {
+      await Route.update(
+        {
+          departure: updatedStartName,
+          destination: updatedEndName,
+          status: status,
+          updatedAt: currentDate(),
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
+      await sequelize.query(`
+        DELETE FROM Route_Stations WHERE route_id = '${id}'
+      `);
+      for (let i = 0; i < stations.length; i++) {
+        await sequelize.query(`
+          INSERT INTO Route_Stations(route_id, station_id, station_index, createdAt, updatedAt)
+          VALUES("${route.id}","${stations[i]}", ${
+          i + 1
+        }, "${currentDate()}", "${currentDate()}")
+        `);
+      }
+      const stationList = await getStationsBelongToRoute(id);
+      const routeWithStations = {
+        id: route.id,
+        departure: route.departure,
+        destination: route.destination,
+        status: route.status,
+        createdAt: route.createdAt,
+        updatedAt: route.updatedAt,
+        stations: stationList[0],
+      };
+      res.status(200).json({
+        status: "Success",
+        message: "Route updated successfully",
+        data: routeWithStations,
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Route not found",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    });
+  }
+};
+
+const changeStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const route = await Route.findByPk(id);
+    if (!route) {
+      res.status(404).json({
+        status: "Fail",
+        message: "Route not found",
+      });
+    } else {
+      route.status = !route.status;
+      await route.save();
+      res.status(200).json({
+        status: "Success",
+        message: `Route is ${
+          route.status ? "enabled" : "disabled"
+        } successfully`,
+        data: route,
+      });
+    }
   } catch (err) {
     res.status(500).json({
       status: "Fail",
@@ -91,4 +187,6 @@ const createRoute = async (req, res) => {
 module.exports = {
   getAllRoutes,
   createRoute,
+  updateRoute,
+  changeStatus,
 };
