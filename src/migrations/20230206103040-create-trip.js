@@ -18,7 +18,7 @@ module.exports = {
         },
       },
       departure: {
-        type: Sequelize.TIME,
+        type: Sequelize.DATE,
         allowNull: false,
       },
       bus_id: {
@@ -33,6 +33,14 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         minVal: 0,
+      },
+      status: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Trip_Status",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,

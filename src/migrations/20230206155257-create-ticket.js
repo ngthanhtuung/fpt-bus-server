@@ -12,6 +12,7 @@ module.exports = {
       trip_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        unique: true,
         references: {
           model: "Trip",
           key: "id",
@@ -20,14 +21,11 @@ module.exports = {
       user_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        unique: true,
         references: {
           model: "Users",
           key: "id",
         },
-      },
-      seat_code: {
-        type: Sequelize.STRING,
-        allowNull: false,
       },
       createdAt: {
         allowNull: false,
