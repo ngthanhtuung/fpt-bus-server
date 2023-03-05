@@ -13,12 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       Trip.belongsTo(models.Route, { foreignKey: "route_id" });
       Trip.belongsTo(models.Bus, { foreignKey: "bus_id" });
       Trip.hasMany(models.Ticket, { foreignKey: "trip_id" });
+      Trip.belongsTo(models.Trip_Status, { foreignKey: "status_id" });
     }
   }
   Trip.init(
     {
       route_id: DataTypes.STRING,
-      departure: DataTypes.TIME,
+      departure: DataTypes.DATE,
       bus_id: DataTypes.STRING,
       ticket_quantity: DataTypes.INTEGER,
     },

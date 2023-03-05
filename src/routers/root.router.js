@@ -6,6 +6,7 @@ const userRouter = require("./user.router");
 const busRouter = require("./bus.router");
 const stationRouter = require("./station.router");
 const routeRouter = require("./route.router");
+const tripRouter = require("./trip.router");
 
 const rootRouter = Router();
 
@@ -16,5 +17,6 @@ rootRouter.use("/notification", notiRouter);
 rootRouter.use("/bus", busRouter);
 rootRouter.use("/station", stationRouter);
 rootRouter.use("/route", routeRouter);
+rootRouter.use("/trip", tripRouter);
 
 module.exports = rootRouter;
