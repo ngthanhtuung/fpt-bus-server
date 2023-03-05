@@ -1,38 +1,39 @@
 module.exports = {
-  put: {
-    tags: ["Station"],
+  post: {
+    tags: ["Route"],
     security: [
       {
         bearerAuth: [],
       },
     ],
-    description: "Update an existing station",
-    parameters: [
-      {
-        name: "id",
-        in: "path",
-        description: "Station id",
-        required: true,
-      },
-    ],
+    description: "Create a new route",
+    parameters: [],
     requestBody: {
-      required: true,
       content: {
         "application/json": {
           schema: {
             type: "object",
             properties: {
-              station_name: {
+              departure: {
                 type: "string",
+                description: "Departure station",
               },
-              longitude: {
+              destination: {
                 type: "string",
+                description: "Destination station",
               },
-              latitude: {
-                type: "string",
-              },
-              status: {
-                type: "boolean",
+              stations: {
+                type: "array",
+                description: "List of stations",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: {
+                      type: "string",
+                      description: "Station ID",
+                    },
+                  },
+                },
               },
             },
           },
@@ -40,8 +41,8 @@ module.exports = {
       },
     },
     responses: {
-      200: {
-        description: "Update station successfully!",
+      201: {
+        description: "Route created successfully",
         content: {
           "application/json": {
             schema: {
@@ -53,40 +54,92 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Update station successfully!",
+                  example: "Route created successfully",
                 },
                 data: {
                   type: "object",
                   properties: {
                     id: {
                       type: "string",
-                      example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
+                      example: "f4fb68c8-1cb3-4a57-9fcf-0485c346614b",
                     },
-                    station_name: {
+                    departure: {
                       type: "string",
-                      example: "University of Transportation",
+                      example: "FPT University",
                     },
-                    longitude: {
+                    destination: {
                       type: "string",
-                      example: "106.7919828",
-                    },
-                    latitude: {
-                      type: "string",
-                      example: "10.8457017",
+                      example: "Vinhomes Grand Park",
                     },
                     status: {
                       type: "boolean",
-                      example: false,
+                      example: true,
                     },
                     createdAt: {
                       type: "string",
-                      example: "2021-02-22T05:23:14.000Z",
+                      example: "2023-03-03 08:32:13",
                     },
-                    updadtedAt: {
+                    updatedAt: {
                       type: "string",
-                      example: "2021-02-22T05:44:35.000Z",
+                      example: "2023-03-03 09:32:13",
+                    },
+                    stations: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
+                          },
+                          station_name: {
+                            type: "string",
+                            example: "University of Transportation",
+                          },
+                          longitude: {
+                            type: "string",
+                            example: "106.7919828",
+                          },
+                          latitude: {
+                            type: "string",
+                            example: "10.8457017",
+                          },
+                          status: {
+                            type: "boolean",
+                            example: true,
+                          },
+                          createdAt: {
+                            type: "string",
+                            example: "2021-02-22T05:23:14.000Z",
+                          },
+                          updadtedAt: {
+                            type: "string",
+                            example: "2021-02-22T05:44:35.000Z",
+                          },
+                        },
+                      },
                     },
                   },
+                },
+              },
+            },
+          },
+        },
+      },
+      400: {
+        description: "Bad request",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  example: "Fail",
+                },
+                message: {
+                  type: "string",
+                  example: "Route is already existed",
                 },
               },
             },
@@ -127,26 +180,6 @@ module.exports = {
                 message: {
                   type: "string",
                   example: "Access denied",
-                },
-              },
-            },
-          },
-        },
-      },
-      404: {
-        description: "Not Found",
-        content: {
-          "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                status: {
-                  type: "string",
-                  example: "Fail",
-                },
-                message: {
-                  type: "string",
-                  example: "Station is not existed!",
                 },
               },
             },

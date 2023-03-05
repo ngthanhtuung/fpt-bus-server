@@ -13,8 +13,8 @@ const busRouter = Router();
 
 busRouter.get("/", [authenticate, authorize(["ADMIN"])], getAllBus);
 busRouter.post("/create", [authenticate, authorize(["ADMIN"])], createBus);
-busRouter.post("/update/:id", [authenticate, authorize(["ADMIN"])], updateBus);
-busRouter.post(
+busRouter.put("/update/:id", [authenticate, authorize(["ADMIN"])], updateBus);
+busRouter.put(
   "/change-status/:id",
   [authenticate, authorize(["ADMIN"])],
   changeStatus

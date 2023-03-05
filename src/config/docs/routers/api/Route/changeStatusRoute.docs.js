@@ -1,24 +1,24 @@
 module.exports = {
   put: {
-    tags: ["Bus"],
+    tags: ["Route"],
     security: [
       {
         bearerAuth: [],
       },
     ],
-    description: "API for changing status of bus (ENABLE or DISABLE)",
+    description: "API for changing status of route (ENABLE or DISABLE)",
     parameters: [
       {
         name: "id",
         in: "path",
         required: true,
-        description: "Bus ID",
+        description: "Route ID",
         type: "string",
       },
     ],
     responses: {
       200: {
-        description: "Bus updated successfully!",
+        description: "Change status successfully",
         content: {
           "application/json": {
             schema: {
@@ -30,47 +30,67 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Bus is enable (disabled)!",
+                  example: "Route is enabled (disabled) successfully",
                 },
                 data: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      id: {
-                        type: "string",
-                        example: "5c526cde-a31b-4ee3-94c7-9c42cbdfd0dd",
-                      },
-                      license_plate: {
-                        type: "string",
-                        example: "29B-144.21",
-                      },
-                      seat_quantity: {
-                        type: "number",
-                        example: 50,
-                      },
-                      driver_id: {
-                        type: "string",
-                        example: "67c8d25a-6caf-4192-9f0a-d44de8d45461",
-                      },
-                      status: {
-                        type: "boolean",
-                        example: false,
-                      },
-                      createdAt: {
-                        type: "string",
-                        example: "2023-02-22T05:23:14.000Z",
-                      },
-                      updatedAt: {
-                        type: "string",
-                        example: "2023-02-22T05:44:35.000Z",
-                      },
-                      User: {
+                  type: "object",
+                  properties: {
+                    id: {
+                      type: "string",
+                      example: "f4fb68c8-1cb3-4a57-9fcf-0485c346614b",
+                    },
+                    departure: {
+                      type: "string",
+                      example: "FPT University",
+                    },
+                    destination: {
+                      type: "string",
+                      example: "Vinhomes Grand Park",
+                    },
+                    status: {
+                      type: "boolean",
+                      example: true,
+                    },
+                    createdAt: {
+                      type: "string",
+                      example: "2023-03-03 08:32:13",
+                    },
+                    updatedAt: {
+                      type: "string",
+                      example: "2023-03-03 09:32:13",
+                    },
+                    stations: {
+                      type: "array",
+                      items: {
                         type: "object",
                         properties: {
-                          fullname: {
+                          id: {
                             type: "string",
-                            example: "Nguyen Van A",
+                            example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
+                          },
+                          station_name: {
+                            type: "string",
+                            example: "University of Transportation",
+                          },
+                          longitude: {
+                            type: "string",
+                            example: "106.7919828",
+                          },
+                          latitude: {
+                            type: "string",
+                            example: "10.8457017",
+                          },
+                          status: {
+                            type: "boolean",
+                            example: true,
+                          },
+                          createdAt: {
+                            type: "string",
+                            example: "2021-02-22T05:23:14.000Z",
+                          },
+                          updadtedAt: {
+                            type: "string",
+                            example: "2021-02-22T05:44:35.000Z",
                           },
                         },
                       },
@@ -123,7 +143,7 @@ module.exports = {
         },
       },
       404: {
-        description: "Bus not found!",
+        description: "Route is not existed!",
         content: {
           "application/json": {
             schema: {
@@ -135,7 +155,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Bus not found!",
+                  example: "Route is not existed!",
                 },
               },
             },
