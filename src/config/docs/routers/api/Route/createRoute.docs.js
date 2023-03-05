@@ -126,6 +126,26 @@ module.exports = {
           },
         },
       },
+      400: {
+        description: "Bad request",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  example: "Fail",
+                },
+                message: {
+                  type: "string",
+                  example: "Route is already existed",
+                },
+              },
+            },
+          },
+        },
+      },
       401: {
         description: "Unauthorized",
         content: {

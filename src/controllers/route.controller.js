@@ -18,6 +18,25 @@ const getStationsBelongToRoute = async (routeId) => {
   }
 };
 
+const isRouteDuplicated = async (start, end) => {
+  try {
+    const startName = await Station.findByPk(start);
+    const endName = await Station.findByPk(end);
+    const route = await Route.findOne({
+      where: {
+        departure: startName,
+        destination: endName,
+      },
+    });
+    if (route) {
+      return true;
+    }
+    return false;
+  } catch (err) {
+    return true;
+  }
+};
+
 const getAllRoutes = async (req, res) => {
   try {
     const routes = await Route.findAll({});
@@ -51,42 +70,48 @@ const createRoute = async (req, res) => {
     const { start, end, stations } = req.body;
     const startName = (await Station.findByPk(start)).station_name;
     const endName = (await Station.findByPk(end)).station_name;
+    const isDuplicated = await isRouteDuplicated(start, end);
+    if (isDuplicated) {
+      res.status(400).json({
+        status: "Fail",
+        message: "Route already exists",
+      });
+      return;
+    } else {
+      const route = await Route.create({
+        id: uuid(),
+        departure: startName,
+        destination: endName,
+        status: true,
+        createdAt: currentDate(),
+        updatedAt: currentDate(),
+      });
 
-    const route = await Route.create({
-      id: uuid(),
-      departure: startName,
-      destination: endName,
-      status: true,
-      createdAt: currentDate(),
-      updatedAt: currentDate(),
-    });
-
-    for (let i = 0; i < stations.length; i++) {
-      console.log("Station: ", stations[i]);
-      await sequelize.query(` 
-        INSERT INTO Route_Stations(route_id, station_id, station_index, createdAt, updatedAt)
-        VALUES("${route.id}","${stations[i]}", ${
-        i + 1
-      }, "${currentDate()}", "${currentDate()}")    
-      `);
+      for (let i = 0; i < stations.length; i++) {
+        console.log("Station: ", stations[i]);
+        await sequelize.query(` 
+          INSERT INTO Route_Stations(route_id, station_id, station_index, createdAt, updatedAt)
+          VALUES("${route.id}","${stations[i]}", ${
+          i + 1
+        }, "${currentDate()}", "${currentDate()}")    
+        `);
+      }
+      const routeStation = await getStationsBelongToRoute(route.id);
+      const routeWithStations = {
+        id: route.id,
+        departure: route.departure,
+        destination: route.destination,
+        status: route.status,
+        createdAt: route.createdAt,
+        updatedAt: route.updatedAt,
+        stations: routeStation[0],
+      };
+      res.status(201).json({
+        status: "Success",
+        message: "Route created successfully",
+        data: routeWithStations,
+      });
     }
-
-    const routeStation = await getStationsBelongToRoute(route.id);
-    const routeWithStations = {
-      id: route.id,
-      departure: route.departure,
-      destination: route.destination,
-      status: route.status,
-      createdAt: route.createdAt,
-      updatedAt: route.updatedAt,
-      stations: routeStation[0],
-    };
-
-    res.status(201).json({
-      status: "Success",
-      message: "Route created successfully",
-      data: routeWithStations,
-    });
   } catch (err) {
     res.status(500).json({
       status: "Fail",
