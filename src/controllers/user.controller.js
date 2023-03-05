@@ -1,5 +1,21 @@
 const { Users, RoleTypes } = require("../models");
 const Sequelize = require("sequelize");
+const validator = require("validator");
+
+const validate = (fullname, email, phone_number, student_id) => {
+  const errors = {};
+  if (
+    validator.isEmpty(fullname) &&
+    validator.isEmpty(email) &&
+    validator.isEmpty(phone_number) &&
+    validator.isEmpty(student_id)
+  ) {
+    errors.all = "All fields are required!";
+  } else {
+  }
+
+  return errors;
+};
 
 const findAllUser = async (req, res) => {
   try {
@@ -54,21 +70,19 @@ const findAllUser = async (req, res) => {
   }
 };
 
-module.exports = {
-  findAllUser,
+const createUser = async (req, res) => {
+  try {
+    const { fullname, email, phone_number, student_id, profile_img, role_id } =
+      req.body;
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      messages: err.messages,
+    });
+  }
 };
 
-// {
-//   "id": "2127094d-6615-4300-8a21-6d16eb66bf7c",
-//   "fullname": "Nguyen Quoc Sy",
-//   "email": "synqse151029@fpt.edu.vn",
-//   "phone_number": "",
-//   "student_id": "SE151029",
-//   "profile_img": "https://lh3.googleusercontent.com/a/AEdFTp41vyAK7DlyiJYHOAVYUWa9uVd5pwQ7y8SlO80U=s96-c",
-//   "status": true,
-//   "role_id": 1,
-//   "createdAt": "2023-02-17T07:02:56.000Z",
-//   "updatedAt": "2023-02-17T07:02:57.000Z",
-//   "RoleType": {
-//     "role_name": "ADMIN"
-//   }
+module.exports = {
+  findAllUser,
+  createUser,
+};

@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { auth } = require("firebase-admin");
-const { findAllUser } = require("../controllers/user.controller");
+const { findAllUser, createUser } = require("../controllers/user.controller");
 const {
   authenticate,
   authorize,
@@ -9,5 +9,6 @@ const {
 const userRouter = Router();
 
 userRouter.get("/", [authenticate, authorize(["ADMIN"])], findAllUser);
+userRouter.post("/create", [authenticate, authorize(["ADMIN"])], createUser);
 
 module.exports = userRouter;
