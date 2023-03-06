@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       trip_id: DataTypes.STRING,
       user_id: DataTypes.STRING,
-      seat_code: DataTypes.STRING,
       transaction_id: DataTypes.STRING,
     },
     {

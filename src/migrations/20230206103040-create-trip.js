@@ -17,10 +17,6 @@ module.exports = {
           key: "id",
         },
       },
-      departure: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
       bus_id: {
         type: Sequelize.UUID,
         allowNull: false,
@@ -28,6 +24,14 @@ module.exports = {
           model: "Bus",
           key: "id",
         },
+      },
+      departure_date: {
+        type: Sequelize.DATEONLY,
+        allowNull: false,
+      },
+      departure_time: {
+        type: Sequelize.TIME,
+        allowNull: false,
       },
       ticket_quantity: {
         type: Sequelize.INTEGER,

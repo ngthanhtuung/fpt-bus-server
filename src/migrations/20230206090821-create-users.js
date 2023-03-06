@@ -16,12 +16,10 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         allowNull: true,
-        unique: true,
       },
       phone_number: {
         type: Sequelize.STRING,
         allowNull: true,
-        unique: true,
       },
       student_id: {
         type: Sequelize.STRING,
