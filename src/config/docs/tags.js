@@ -5,7 +5,7 @@ module.exports = {
       description: "Authentication related routes",
     },
     {
-      name: "Users",
+      name: "User",
       description: "User related routes",
     },
     {

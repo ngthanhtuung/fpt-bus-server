@@ -18,5 +18,6 @@ rootRouter.use("/bus", busRouter);
 rootRouter.use("/station", stationRouter);
 rootRouter.use("/route", routeRouter);
 rootRouter.use("/trip", tripRouter);
+rootRouter.use("/user", userRouter);
 
 module.exports = rootRouter;

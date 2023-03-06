@@ -1,32 +1,25 @@
 module.exports = {
   get: {
-    tags: ["Users"],
+    tags: ["User"],
     security: [
       {
         bearerAuth: [],
       },
     ],
-    description: "API for managing users",
+    description: "API for getting all users",
     parameters: [
       {
-        name: "fullname",
+        name: "search_query",
         in: "query",
         required: false,
-        description: "User's fullname",
+        description: "Search query",
         type: "string",
       },
       {
-        name: "student_id",
+        name: "role_name",
         in: "query",
         required: false,
-        description: "Student ID",
-        type: "string",
-      },
-      {
-        name: "email",
-        in: "query",
-        required: false,
-        description: "Email",
+        description: "User's role name",
         type: "string",
       },
       {
@@ -37,11 +30,18 @@ module.exports = {
         type: "boolean",
       },
       {
-        name: "role_name",
+        name: "limit",
         in: "query",
         required: false,
-        description: "User's role name",
-        type: "string",
+        description: "Limit number of users",
+        type: "number",
+      },
+      {
+        name: "page",
+        in: "query",
+        required: false,
+        description: "Page number",
+        type: "number",
       },
     ],
     responses: {

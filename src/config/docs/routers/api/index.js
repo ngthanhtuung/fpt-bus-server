@@ -1,5 +1,8 @@
 const signin = require("./Auth/signin.docs");
 const getUsers = require("./Users/getUsers.docs");
+const createUser = require("./Users/createUser.docs");
+const updateUser = require("./Users/updateUser.docs");
+const changeStatusUser = require("./Users/changeStatusUser.docs");
 const uploadFile = require("./Firebase/uploadFile.docs");
 const pushNotification = require("./Firebase/pushNotification.docs");
 const getAllBus = require("./Bus/getAllBus.docs");
@@ -25,6 +28,16 @@ module.exports = {
     "/api/v1/users": {
       ...getUsers,
     },
+    "/api/v1/users/create": {
+      ...createUser,
+    },
+    "/api/v1/users/update/{id}": {
+      ...updateUser,
+    },
+    "/api/v1/users/change-status/{id}": {
+      ...changeStatusUser,
+    },
+
     //Upload File
     "/api/v1/upload-file": {
       ...uploadFile,
