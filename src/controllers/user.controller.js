@@ -64,7 +64,10 @@ const findAllUser = async (req, res) => {
     const offset = (page - 1) * limit;
 
     let where;
-    let include = [];
+    let include = {
+      model: RoleTypes,
+      attributes: ["role_name"],
+    };
 
     if (search_query != "") {
       where = {
@@ -93,17 +96,16 @@ const findAllUser = async (req, res) => {
     }
 
     if (role_name) {
-      include.push({
-        model: RoleTypes,
-        attributes: ["role_name"],
+      include = {
+        ...include,
         where: {
-          role_name: role_name.toUpperCase(),
+          role_name: role_name,
         },
-      });
+      };
     }
     const { count, rows } = await Users.findAndCountAll({
       where,
-      include,
+      include: [include],
       limit,
       offset,
     });

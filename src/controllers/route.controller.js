@@ -76,7 +76,6 @@ const createRoute = async (req, res) => {
         status: "Fail",
         message: "Route already exists",
       });
-      return;
     } else {
       const route = await Route.create({
         id: uuid(),
