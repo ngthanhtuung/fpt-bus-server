@@ -23,11 +23,11 @@ module.exports = {
           schema: {
             type: "object",
             properties: {
-              departure: {
+              start: {
                 type: "string",
                 description: "Departure station",
               },
-              destination: {
+              end: {
                 type: "string",
                 description: "Destination station",
               },
@@ -39,13 +39,8 @@ module.exports = {
                 type: "array",
                 description: "List of stations",
                 items: {
-                  type: "object",
-                  properties: {
-                    id: {
-                      type: "string",
-                      description: "Station ID",
-                    },
-                  },
+                  type: "string",
+                  example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
                 },
               },
             },
