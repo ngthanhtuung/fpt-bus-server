@@ -17,12 +17,14 @@ module.exports = {
         name: "limit",
         in: "query",
         required: false,
+        default: 10,
         description: "Limit number of bus",
       },
       {
         name: "page",
         in: "query",
         required: false,
+        default: 1,
         description: "Page number",
       },
     ],
@@ -50,15 +52,15 @@ module.exports = {
                       type: "number",
                       example: 10,
                     },
-                    limit: {
+                    per_page: {
                       type: "number",
                       example: 10,
                     },
-                    page: {
+                    current_page: {
                       type: "number",
                       example: 1,
                     },
-                    numPage: {
+                    total_page: {
                       type: "number",
                       example: 1,
                     },
