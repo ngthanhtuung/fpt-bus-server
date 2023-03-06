@@ -8,7 +8,7 @@ const app = express();
 
 const corsOpts = {
   origin: "*",
-  methods: ["GET", "POST", "UPDATE", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["*"],
 };
 

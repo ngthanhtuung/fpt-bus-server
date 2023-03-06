@@ -1,34 +1,38 @@
 module.exports = {
   post: {
-    tags: ["Route"],
+    tags: ["User"],
     security: [
       {
         bearerAuth: [],
       },
     ],
-    description: "Create a new route",
-    parameters: [],
+    description: "API for creating a new user",
     requestBody: {
+      required: true,
       content: {
         "application/json": {
           schema: {
             type: "object",
+            required: true,
+            description: "User object",
             properties: {
-              start: {
+              fullname: {
                 type: "string",
-                description: "Departure station",
               },
-              end: {
+              email: {
                 type: "string",
-                description: "Destination station",
               },
-              stations: {
-                type: "array",
-                description: "List of stations",
-                items: {
-                  type: "string",
-                  example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
-                },
+              phone_number: {
+                type: "string",
+              },
+              student_id: {
+                type: "string",
+              },
+              profile_img: {
+                type: "string",
+              },
+              role_id: {
+                type: "number",
               },
             },
           },
@@ -37,7 +41,7 @@ module.exports = {
     },
     responses: {
       201: {
-        description: "Route created successfully",
+        description: "Created user successfully",
         content: {
           "application/json": {
             schema: {
@@ -49,70 +53,30 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Route created successfully",
+                  example: "Created user successfully",
                 },
                 data: {
                   type: "object",
                   properties: {
                     id: {
                       type: "string",
-                      example: "f4fb68c8-1cb3-4a57-9fcf-0485c346614b",
+                      example: "c1754352-dc1c-48d9-a28d-2b1e9bea63ee",
                     },
-                    departure: {
+                    fullname: {
                       type: "string",
-                      example: "FPT University",
+                      example: "Nguyen Van A",
                     },
-                    destination: {
+                    email: {
                       type: "string",
-                      example: "Vinhomes Grand Park",
                     },
-                    status: {
-                      type: "boolean",
-                      example: true,
-                    },
-                    createdAt: {
+                    phone_number: {
                       type: "string",
-                      example: "2023-03-03 08:32:13",
                     },
-                    updatedAt: {
+                    student_id: {
                       type: "string",
-                      example: "2023-03-03 09:32:13",
                     },
-                    stations: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          id: {
-                            type: "string",
-                            example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
-                          },
-                          station_name: {
-                            type: "string",
-                            example: "University of Transportation",
-                          },
-                          longitude: {
-                            type: "string",
-                            example: "106.7919828",
-                          },
-                          latitude: {
-                            type: "string",
-                            example: "10.8457017",
-                          },
-                          status: {
-                            type: "boolean",
-                            example: true,
-                          },
-                          createdAt: {
-                            type: "string",
-                            example: "2021-02-22T05:23:14.000Z",
-                          },
-                          updadtedAt: {
-                            type: "string",
-                            example: "2021-02-22T05:44:35.000Z",
-                          },
-                        },
-                      },
+                    profile_img: {
+                      type: "string",
                     },
                   },
                 },
@@ -122,7 +86,7 @@ module.exports = {
         },
       },
       400: {
-        description: "Bad request",
+        description: "User is already exists!",
         content: {
           "application/json": {
             schema: {
@@ -134,7 +98,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Route is already existed",
+                  example: "User is already exists!",
                 },
               },
             },
@@ -182,7 +146,7 @@ module.exports = {
         },
       },
       500: {
-        description: "Internal server error",
+        description: "Server error",
         content: {
           "application/json": {
             schema: {
@@ -194,7 +158,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Internal server error",
+                  example: "Server error",
                 },
               },
             },

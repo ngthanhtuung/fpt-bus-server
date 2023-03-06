@@ -1,19 +1,18 @@
 module.exports = {
   put: {
-    tags: ["Route"],
+    tags: ["User"],
     security: [
       {
         bearerAuth: [],
       },
     ],
-    description: "Update an exsited route",
+    description: "Update an existing station",
     parameters: [
       {
         name: "id",
         in: "path",
-        description: "Route ID",
+        description: "Station id",
         required: true,
-        type: "string",
       },
     ],
     requestBody: {
@@ -23,25 +22,17 @@ module.exports = {
           schema: {
             type: "object",
             properties: {
-              start: {
+              station_name: {
                 type: "string",
-                description: "Departure station",
               },
-              end: {
+              longitude: {
                 type: "string",
-                description: "Destination station",
+              },
+              latitude: {
+                type: "string",
               },
               status: {
                 type: "boolean",
-                description: "Route status",
-              },
-              stations: {
-                type: "array",
-                description: "List of stations",
-                items: {
-                  type: "string",
-                  example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
-                },
               },
             },
           },
@@ -50,7 +41,7 @@ module.exports = {
     },
     responses: {
       200: {
-        description: "Route updated successfully",
+        description: "Update station successfully!",
         content: {
           "application/json": {
             schema: {
@@ -62,70 +53,38 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Route created successfully",
+                  example: "Update station successfully!",
                 },
                 data: {
                   type: "object",
                   properties: {
                     id: {
                       type: "string",
-                      example: "f4fb68c8-1cb3-4a57-9fcf-0485c346614b",
+                      example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
                     },
-                    departure: {
+                    station_name: {
                       type: "string",
-                      example: "FPT University",
+                      example: "University of Transportation",
                     },
-                    destination: {
+                    longitude: {
                       type: "string",
-                      example: "Vinhomes Grand Park",
+                      example: "106.7919828",
+                    },
+                    latitude: {
+                      type: "string",
+                      example: "10.8457017",
                     },
                     status: {
                       type: "boolean",
-                      example: true,
+                      example: false,
                     },
                     createdAt: {
                       type: "string",
-                      example: "2023-03-03 08:32:13",
+                      example: "2021-02-22T05:23:14.000Z",
                     },
-                    updatedAt: {
+                    updadtedAt: {
                       type: "string",
-                      example: "2023-03-03 09:32:13",
-                    },
-                    stations: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          id: {
-                            type: "string",
-                            example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
-                          },
-                          station_name: {
-                            type: "string",
-                            example: "University of Transportation",
-                          },
-                          longitude: {
-                            type: "string",
-                            example: "106.7919828",
-                          },
-                          latitude: {
-                            type: "string",
-                            example: "10.8457017",
-                          },
-                          status: {
-                            type: "boolean",
-                            example: true,
-                          },
-                          createdAt: {
-                            type: "string",
-                            example: "2021-02-22T05:23:14.000Z",
-                          },
-                          updadtedAt: {
-                            type: "string",
-                            example: "2021-02-22T05:44:35.000Z",
-                          },
-                        },
-                      },
+                      example: "2021-02-22T05:44:35.000Z",
                     },
                   },
                 },
@@ -175,7 +134,7 @@ module.exports = {
         },
       },
       404: {
-        description: "Route not found",
+        description: "Not Found",
         content: {
           "application/json": {
             schema: {
@@ -187,7 +146,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Route not found",
+                  example: "Station is not existed!",
                 },
               },
             },

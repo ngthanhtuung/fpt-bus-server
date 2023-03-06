@@ -1,56 +1,24 @@
 module.exports = {
   put: {
-    tags: ["Route"],
+    tags: ["User"],
     security: [
       {
         bearerAuth: [],
       },
     ],
-    description: "Update an exsited route",
+    description: "API for changing status of user (ENABLE or DISABLE)",
     parameters: [
       {
         name: "id",
         in: "path",
-        description: "Route ID",
         required: true,
+        description: "User ID",
         type: "string",
       },
     ],
-    requestBody: {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              start: {
-                type: "string",
-                description: "Departure station",
-              },
-              end: {
-                type: "string",
-                description: "Destination station",
-              },
-              status: {
-                type: "boolean",
-                description: "Route status",
-              },
-              stations: {
-                type: "array",
-                description: "List of stations",
-                items: {
-                  type: "string",
-                  example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
-                },
-              },
-            },
-          },
-        },
-      },
-    },
     responses: {
       200: {
-        description: "Route updated successfully",
+        description: "User status updated successfully!",
         content: {
           "application/json": {
             schema: {
@@ -62,72 +30,79 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Route created successfully",
+                  example: "User is enable (disabled)!",
                 },
                 data: {
                   type: "object",
                   properties: {
                     id: {
                       type: "string",
-                      example: "f4fb68c8-1cb3-4a57-9fcf-0485c346614b",
+                      example: "ddfdbbb3-32ff-464f-b24e-45b8c53a0358",
                     },
-                    departure: {
+                    fullname: {
                       type: "string",
-                      example: "FPT University",
+                      example: "Nguyen Van A",
                     },
-                    destination: {
+                    email: {
                       type: "string",
-                      example: "Vinhomes Grand Park",
+                      example: "anv@fe.edu.vn",
+                    },
+                    student_id: {
+                      type: "string",
+                    },
+                    profile_img: {
+                      type: "string",
+                    },
+                    phone_number: {
+                      type: "string",
+                      example: "0123456789",
                     },
                     status: {
                       type: "boolean",
-                      example: true,
+                      example: false,
+                    },
+                    role_id: {
+                      type: "number",
+                      example: 3,
                     },
                     createdAt: {
                       type: "string",
-                      example: "2023-03-03 08:32:13",
+                      example: "2021-08-10T08:00:00.000Z",
                     },
                     updatedAt: {
                       type: "string",
-                      example: "2023-03-03 09:32:13",
+                      example: "2021-08-10T08:00:00.000Z",
                     },
-                    stations: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          id: {
-                            type: "string",
-                            example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
-                          },
-                          station_name: {
-                            type: "string",
-                            example: "University of Transportation",
-                          },
-                          longitude: {
-                            type: "string",
-                            example: "106.7919828",
-                          },
-                          latitude: {
-                            type: "string",
-                            example: "10.8457017",
-                          },
-                          status: {
-                            type: "boolean",
-                            example: true,
-                          },
-                          createdAt: {
-                            type: "string",
-                            example: "2021-02-22T05:23:14.000Z",
-                          },
-                          updadtedAt: {
-                            type: "string",
-                            example: "2021-02-22T05:44:35.000Z",
-                          },
+                    RoleTypes: {
+                      type: "object",
+                      properties: {
+                        role_name: {
+                          type: "string",
+                          example: "DRIVER",
                         },
                       },
                     },
                   },
+                },
+              },
+            },
+          },
+        },
+      },
+      400: {
+        description: "Bad request",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                status: {
+                  type: "string",
+                  example: "Fail",
+                },
+                message: {
+                  type: "string",
+                  example: "You're loggin into the system. Operation denied!",
                 },
               },
             },
@@ -175,7 +150,7 @@ module.exports = {
         },
       },
       404: {
-        description: "Route not found",
+        description: "User is not found!",
         content: {
           "application/json": {
             schema: {
@@ -187,7 +162,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Route not found",
+                  example: "User is not found!",
                 },
               },
             },
@@ -195,7 +170,7 @@ module.exports = {
         },
       },
       500: {
-        description: "Internal server error",
+        description: "Server error",
         content: {
           "application/json": {
             schema: {
@@ -207,7 +182,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Internal server error",
+                  example: "Server error",
                 },
               },
             },

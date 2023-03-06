@@ -28,8 +28,16 @@ const validate = (license_plate, seat_quantity, driver_id) => {
 
 const getAllBus = async (req, res) => {
   try {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
+    const limit =
+      !isNaN(Math.abs(parseInt(req.query.limit))) &&
+      Math.abs(parseInt(req.query.limit)) > 0
+        ? Math.abs(parseInt(req.query.limit))
+        : 10;
+    const page =
+      !isNaN(Math.abs(parseInt(req.query.page))) &&
+      Math.abs(parseInt(req.query.limit)) > 0
+        ? Math.abs(parseInt(req.query.page))
+        : 1;
     const search_query = req.query.search_query || "";
     const offset = (page - 1) * limit;
     const numPage = Math.ceil((await Bus.count()) / limit);
@@ -44,9 +52,9 @@ const getAllBus = async (req, res) => {
       message: "Get all bus succesfully!",
       pagination: {
         total: busList[0].length,
-        limit,
-        page,
-        numPage,
+        per_page: limit,
+        current_page: page,
+        total_page: numPage,
       },
       data: busList[0],
     });
