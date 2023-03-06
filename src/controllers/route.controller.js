@@ -1,6 +1,7 @@
 const { Route, Station, sequelize } = require("../models");
 const currentDate = require("../utils/currentDate");
 const { v4: uuid } = require("uuid");
+const { Op } = require("sequelize");
 
 const getStationsBelongToRoute = async (routeId) => {
   try {
@@ -18,20 +19,19 @@ const getStationsBelongToRoute = async (routeId) => {
   }
 };
 
-const isRouteDuplicated = async (start, end) => {
+const isRouteDuplicated = async (startName, endName) => {
   try {
-    const startName = await Station.findByPk(start);
-    const endName = await Station.findByPk(end);
+    const where = {
+      [Op.and]: [{ departure: startName }, { destination: endName }],
+    };
     const route = await Route.findOne({
-      where: {
-        departure: startName,
-        destination: endName,
-      },
+      where,
     });
     if (route) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   } catch (err) {
     return true;
   }
@@ -70,13 +70,12 @@ const createRoute = async (req, res) => {
     const { start, end, stations } = req.body;
     const startName = (await Station.findByPk(start)).station_name;
     const endName = (await Station.findByPk(end)).station_name;
-    const isDuplicated = await isRouteDuplicated(start, end);
+    const isDuplicated = await isRouteDuplicated(startName, endName);
     if (isDuplicated) {
       res.status(400).json({
         status: "Fail",
         message: "Route already exists",
       });
-      return;
     } else {
       const route = await Route.create({
         id: uuid(),
