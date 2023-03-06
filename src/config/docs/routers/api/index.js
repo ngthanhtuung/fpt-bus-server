@@ -31,9 +31,6 @@ module.exports = {
     "/api/v1/users/create": {
       ...createUser,
     },
-    "/api/v1/users/update/{id}": {
-      ...updateUser,
-    },
     "/api/v1/users/change-status/{id}": {
       ...changeStatusUser,
     },
