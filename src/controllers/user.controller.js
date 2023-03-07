@@ -6,42 +6,61 @@ const { v4: uuid } = require("uuid");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 
-const errors = {};
-
 const validate = (fullname, email, phone_number) => {
+  const errors = {};
+  const regex =
+    /^(\+?84|0)?((1(2([0-9])|6([2-9])|88|86|99))|((8|9)((?!5)[0-9])))([0-9]{7})$/;
   if (validator.isEmpty(fullname)) {
     errors.fullname = "Fullname is required!";
   }
-  if (!validator.isLength(fullname, { min: 3, max: 20 })) {
-    errors.fullname = "Fullname must be between 3 and 20 characters!";
+  if (!validator.isLength(fullname, { min: 3, max: 50 })) {
+    errors.fullname = "Fullname must be between 3 and 50 characters!";
   }
   if (
-    !validator.isEmail(email) ||
-    !checkEmailDomain(email, ["fe.edu.vn", "fpt.edu.vn"])
+    email &&
+    (!validator.isEmail(email) ||
+      !checkEmailDomain(email, ["fe.edu.vn", "fpt.edu.vn"]))
   ) {
     errors.email = "Email is invalid!";
   }
-  if (!validator.isMobilePhone(phone_number, "vi-VN")) {
+  if (phone_number && !regex.test(phone_number)) {
     errors.phone_number = "Phone number is invalid!";
   }
   return errors;
 };
 
 const checkExisted = async (email, phone_number) => {
-  const existedUser = await Users.findOne({
-    where: {
-      [Op.or]: [{ email }, { phone_number }],
-    },
-  });
-  if (existedUser) {
-    if (existedUser.email === email) {
-      errors.email = "Email already exists!";
-    }
-    if (existedUser.phone_number === phone_number) {
-      errors.phone_number = "Phone number already exists!";
-    }
+  const errors = {};
+  const checkEmail = email || "";
+  const checkPhone = phone_number || "";
+  if (checkEmail === "" && checkPhone === "") {
     return errors;
   }
+  if (checkEmail.length > 0) {
+    const existedUser = await Users.findOne({
+      where: {
+        email: checkEmail,
+      },
+    });
+    if (existedUser) {
+      if (existedUser.email === email) {
+        errors.email = "Email already exists!";
+      }
+    }
+  }
+  if (checkPhone.length > 0) {
+    const existedUser = await Users.findOne({
+      where: {
+        phone_number: checkPhone,
+      },
+    });
+    if (existedUser) {
+      if (existedUser.phone_number === checkPhone) {
+        errors.phone = "Phone already exists!";
+      }
+    }
+  }
+  return errors;
 };
 
 const findAllUser = async (req, res) => {
