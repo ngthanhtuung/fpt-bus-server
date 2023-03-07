@@ -22,11 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       bus_id: DataTypes.STRING,
       departure_date: DataTypes.DATEONLY,
       departure_time: DataTypes.TIME,
+      status: DataTypes.INTEGER,
       ticket_quantity: DataTypes.INTEGER,
     },
     {
       sequelize,
       modelName: "Trip",
+      tableName: "Trip",
     }
   );
   return Trip;
