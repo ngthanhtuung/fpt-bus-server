@@ -11,7 +11,6 @@ const client = redis.createClient(process.env.PORT_REDIS);
 const checkDataCache = async (req, res, next) => {
   const { key } = req.params;
   try {
-    //get data from cache redis
     const cacheResults = await client.get(key);
     /**
      * if cache results not empty -> get data from cache
