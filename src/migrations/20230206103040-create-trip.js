@@ -44,6 +44,7 @@ module.exports = {
         references: {
           model: "Trip_Status",
           key: "id",
+          as: "status",
         },
       },
       createdAt: {
