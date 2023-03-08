@@ -7,6 +7,7 @@ const busRouter = require("./bus.router");
 const stationRouter = require("./station.router");
 const routeRouter = require("./route.router");
 const tripRouter = require("./trip.router");
+const ticketReservationRouter = require("./ticket-reservation.router");
 
 const rootRouter = Router();
 
@@ -19,5 +20,6 @@ rootRouter.use("/station", stationRouter);
 rootRouter.use("/route", routeRouter);
 rootRouter.use("/trip", tripRouter);
 rootRouter.use("/user", userRouter);
+rootRouter.use("/ticket-reservation", ticketReservationRouter);
 
 module.exports = rootRouter;
