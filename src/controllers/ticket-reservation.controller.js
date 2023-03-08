@@ -7,7 +7,7 @@ const ticketReservation = async (req, res) => {
         const { idUser, idTrip } = req.body
         //check param pass in
         if (idUser == undefined || idTrip == undefined) {
-            res.status(400).json({
+            return res.status(400).json({
                 status: "Fail",
                 message: "Missing param !!!",
             });
@@ -16,7 +16,7 @@ const ticketReservation = async (req, res) => {
         const trip = await Trip.findByPk(idTrip);
         console.log("trip:", trip);
         if (trip == undefined) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Fail",
                 message: "Trip not found!!!",
             });
@@ -41,20 +41,40 @@ const ticketReservation = async (req, res) => {
                     updatedAt: currentDate(),
                 });
                 console.log("ticket reservation:", ticket);
+                if (ticket) {
+                    await Trip.update(
+                        {
+                            ticket_quantity: trip.ticket_quantity - 1
+                        },
+                        { where: { id: idTrip } }
+                    );
+                    return res.status(200).json({
+                        status: "Success",
+                        message: "Booking ticket successfully!!!",
+                        data: {
+                            qrCode: `http://api.fpt-bus.online/api/v1/check-in/${ticket.dataValues.id}`
+                        }
+                    })
+                } else {
+                    return res.status(400).json({
+                        status: "Fail",
+                        message: "Booking ticket unsuccessfully!!!",
+                    });
+                }
             } else {
-                res.status(400).json({
+                return res.status(400).json({
                     status: "Fail",
                     message: "Invalid trip!!!",
                 });
             }
         } else {
-            res.status(400).json({
+            return res.status(400).json({
                 status: "Fail",
                 message: "You have already booked your ticket for this trip!!!",
             });
         }
     } catch (err) {
-        res.status(500).json({
+        return res.status(500).json({
             status: "Fail",
             message: err.message,
         });

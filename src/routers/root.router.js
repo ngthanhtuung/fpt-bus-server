@@ -8,6 +8,7 @@ const stationRouter = require("./station.router");
 const routeRouter = require("./route.router");
 const tripRouter = require("./trip.router");
 const ticketReservationRouter = require("./ticket-reservation.router");
+const checkInRouter = require("./checkin.router");
 
 const rootRouter = Router();
 
@@ -21,5 +22,6 @@ rootRouter.use("/route", routeRouter);
 rootRouter.use("/trip", tripRouter);
 rootRouter.use("/user", userRouter);
 rootRouter.use("/ticket-reservation", ticketReservationRouter);
+rootRouter.use("/check-in", checkInRouter);
 
 module.exports = rootRouter;
