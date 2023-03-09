@@ -9,11 +9,16 @@ module.exports = {
     description: "Create a new route",
     parameters: [],
     requestBody: {
+      required: true,
       content: {
         "application/json": {
           schema: {
             type: "object",
             properties: {
+              route_name: {
+                type: "string",
+                description: "Route name",
+              },
               start: {
                 type: "string",
                 description: "Departure station",
@@ -58,13 +63,49 @@ module.exports = {
                       type: "string",
                       example: "f4fb68c8-1cb3-4a57-9fcf-0485c346614b",
                     },
+                    route_name: {
+                      type: "string",
+                      example: "Route 1",
+                    },
                     departure: {
                       type: "string",
                       example: "FPT University",
                     },
+                    departure_coordinates: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          latitude: {
+                            type: "string",
+                            example: "10.8457017",
+                          },
+                          longitude: {
+                            type: "string",
+                            example: "106.7919828",
+                          }
+                        }
+                      }
+                    },
                     destination: {
                       type: "string",
                       example: "Vinhomes Grand Park",
+                    },
+                    destination_coordinates: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          latitude: {
+                            type: "string",
+                            example: "10.8457017",
+                          },
+                          longitude: {
+                            type: "string",
+                            example: "106.7919828",
+                          }
+                        }
+                      }
                     },
                     status: {
                       type: "boolean",
