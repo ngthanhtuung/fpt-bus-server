@@ -15,7 +15,7 @@ const {
 } = require("../middlewares/cache/checkDataCache.middleware");
 const tripRouter = Router();
 
-tripRouter.get("/", [authenticate], getAllTrip);
+// tripRouter.get("/", [authenticate], getAllTrip);
 tripRouter.post("/create", [authenticate, authorize(["ADMIN"])], createTrip);
 tripRouter.put("/update/:id", [authenticate, authorize(["ADMIN"])], updateTrip);
 tripRouter.put(
