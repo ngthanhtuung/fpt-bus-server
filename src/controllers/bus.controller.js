@@ -26,16 +26,18 @@ const validate = (license_plate, seat_quantity, driver_id) => {
   return errors;
 };
 
+
+
 const getAllBus = async (req, res) => {
   try {
     const limit =
       !isNaN(Math.abs(parseInt(req.query.limit))) &&
-      Math.abs(parseInt(req.query.limit)) > 0
+        Math.abs(parseInt(req.query.limit)) > 0
         ? Math.abs(parseInt(req.query.limit))
         : 10;
     const page =
       !isNaN(Math.abs(parseInt(req.query.page))) &&
-      Math.abs(parseInt(req.query.limit)) > 0
+        Math.abs(parseInt(req.query.limit)) > 0
         ? Math.abs(parseInt(req.query.page))
         : 1;
     const search_query = req.query.search_query || "";

@@ -37,16 +37,42 @@ const isRouteDuplicated = async (startName, endName) => {
   }
 };
 
+const getCoordinates = async (stationName) => {
+  try {
+    const coordinates = await sequelize.query(`
+    SELECT longitude, latitude
+    from Station
+    WHERE station_name = '${stationName}'
+    `);
+    if (coordinates) {
+      return coordinates[0];
+    } else {
+      return null;
+    }
+  } catch (err) {
+    return null;
+  }
+};
+
 const getAllRoutes = async (req, res) => {
   try {
-    const routes = await Route.findAll({});
+    const routes = await Route.findAll({
+      order: [
+        ["route_name", 'ASC']
+      ]
+    });
     const routesWithStations = await Promise.all(
       routes.map(async (route) => {
         const stations = await getStationsBelongToRoute(route.id);
+        const departure_coordinates = await getCoordinates(route.departure);
+        const destination_coordinates = await getCoordinates(route.destination);
         return {
           id: route.id,
+          route_name: route.route_name,
           departure: route.departure,
+          departure_coordinates: departure_coordinates,
           destination: route.destination,
+          destination_coordinates: destination_coordinates,
           status: route.status,
           stations: stations[0],
         };
@@ -67,7 +93,7 @@ const getAllRoutes = async (req, res) => {
 
 const createRoute = async (req, res) => {
   try {
-    const { start, end, stations } = req.body;
+    const { route_name, start, end, stations } = req.body;
     const startName = (await Station.findByPk(start)).station_name;
     const endName = (await Station.findByPk(end)).station_name;
     const isDuplicated = await isRouteDuplicated(startName, endName);
@@ -79,6 +105,7 @@ const createRoute = async (req, res) => {
     } else {
       const route = await Route.create({
         id: uuid(),
+        route_name: route_name,
         departure: startName,
         destination: endName,
         status: true,
@@ -90,14 +117,14 @@ const createRoute = async (req, res) => {
         console.log("Station: ", stations[i]);
         await sequelize.query(` 
           INSERT INTO Route_Stations(route_id, station_id, station_index, createdAt, updatedAt)
-          VALUES("${route.id}","${stations[i]}", ${
-          i + 1
-        }, "${currentDate()}", "${currentDate()}")    
+          VALUES("${route.id}","${stations[i]}", ${i + 1
+          }, "${currentDate()}", "${currentDate()}")    
         `);
       }
       const routeStation = await getStationsBelongToRoute(route.id);
       const routeWithStations = {
         id: route.id,
+        route_name: route.route_name,
         departure: route.departure,
         destination: route.destination,
         status: route.status,
@@ -122,13 +149,14 @@ const createRoute = async (req, res) => {
 const updateRoute = async (req, res) => {
   try {
     const id = req.params.id;
-    const { start, end, stations, status } = req.body;
+    const { route_name, vstart, end, stations, status } = req.body;
     const updatedStartName = (await Station.findByPk(start)).station_name;
     const updatedEndName = (await Station.findByPk(end)).station_name;
     const route = await Route.findByPk(id);
     if (route) {
       await Route.update(
         {
+          route_name: route_name,
           departure: updatedStartName,
           destination: updatedEndName,
           status: status,
@@ -146,14 +174,14 @@ const updateRoute = async (req, res) => {
       for (let i = 0; i < stations.length; i++) {
         await sequelize.query(`
           INSERT INTO Route_Stations(route_id, station_id, station_index, createdAt, updatedAt)
-          VALUES("${route.id}","${stations[i]}", ${
-          i + 1
-        }, "${currentDate()}", "${currentDate()}")
+          VALUES("${route.id}","${stations[i]}", ${i + 1
+          }, "${currentDate()}", "${currentDate()}")
         `);
       }
       const stationList = await getStationsBelongToRoute(id);
       const routeWithStations = {
         id: route.id,
+        route_name: route.route_name,
         departure: route.departure,
         destination: route.destination,
         status: route.status,
@@ -194,9 +222,8 @@ const changeStatus = async (req, res) => {
       await route.save();
       res.status(200).json({
         status: "Success",
-        message: `Route is ${
-          route.status ? "enabled" : "disabled"
-        } successfully`,
+        message: `Route is ${route.status ? "enabled" : "disabled"
+          } successfully`,
         data: route,
       });
     }
