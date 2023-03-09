@@ -17,6 +17,10 @@ module.exports = {
       description: "Trip related routes",
     },
     {
+      name: "Ticket",
+      description: "Ticket related routes",
+    },
+    {
       name: "Route",
       description: "Route related routes",
     },

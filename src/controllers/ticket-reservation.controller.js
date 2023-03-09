@@ -1,86 +1,107 @@
 const { v4: uuid } = require("uuid");
 const { Ticket, Trip } = require("../models");
 const currentDate = require("../utils/currentDate");
+const { generateQRCode } = require("../utils/qrCode")
+const { uploadQRCode } = require('./upload.controller');
 const ticketReservation = async (req, res) => {
     try {
         //Pass param user id and trip id in request body
-        const { idUser, idTrip } = req.body
-        //check param pass in
-        if (idUser == undefined || idTrip == undefined) {
+        const userLoginId = req.user_id;
+        const { tripId } = req.body;
+        if (tripId == undefined) {
             return res.status(400).json({
                 status: "Fail",
-                message: "Missing param !!!",
+                message: "Trip ID is required"
             });
         }
         //Find trip by id
-        const trip = await Trip.findByPk(idTrip);
+        const trip = await Trip.findByPk(tripId);
         console.log("trip:", trip);
         if (trip == undefined) {
             return res.status(404).json({
                 status: "Fail",
-                message: "Trip not found!!!",
+                message: "Trip not found!!!"
             });
         }
         const checkTicketReservation = await Ticket.findAll({
             where: {
-                trip_id: idTrip,
-                user_id: idUser
+                trip_id: tripId,
+                user_id: userLoginId
             }
         });
-        console.log("checkTicketReservation:", checkTicketReservation);
         if (checkTicketReservation.length === 0) {
             //trip status = 1 (active) accept booking else response trip invalid
             if (trip.status === 1 && trip.ticket_quantity > 0) {
+                const ticketId = uuid();
                 const ticket = await Ticket.create({
-                    id: uuid(),
-                    trip_id: idTrip,
-                    user_id: idUser,
-                    //true : unused, false: used
+                    id: ticketId,
+                    trip_id: tripId,
+                    user_id: userLoginId,
+                    qrUrl: "",
                     status: true,
                     createdAt: currentDate(),
-                    updatedAt: currentDate(),
+                    updatedAt: currentDate()
                 });
-                console.log("ticket reservation:", ticket);
+                const data = `${process.env.NODE_ENV === `development` ? `http://${process.env.HOST}:${process.env.PORT}/api/v1/ticket/check-in/${ticketId}` : `${process.env.DOMAIN}/api/v1/ticket/check-in/${ticketId}`}`;
+                const base64Ticket = await generateQRCode(data);
+                console.log(`\n\nData: `, data);
+                const imgUrl = await uploadQRCode(base64Ticket, ticketId);
+                ticket.qrUrl = imgUrl;
+                await ticket.save();
                 if (ticket) {
                     await Trip.update(
                         {
                             ticket_quantity: trip.ticket_quantity - 1
                         },
-                        { where: { id: idTrip } }
+                        { where: { id: tripId } }
                     );
-                    return res.status(200).json({
+                    return res.status(201).json({
                         status: "Success",
-                        message: "Booking ticket successfully!!!",
+                        message: "Booking ticket successfully",
                         data: {
-                            qrCode: `http://api.fpt-bus.online/api/v1/check-in/${ticket.dataValues.id}`
+                            ticket_id: ticket.id,
+                            trip_id: ticket.trip_id,
+                            user_id: ticket.user_id,
+                            qrUrl: ticket.qrUrl,
+                            status: ticket.status,
+                            createdAt: ticket.createdAt,
+                            updatedAt: ticket.updatedAt
                         }
-                    })
+                    });
                 } else {
+                    await Trip.update(
+                        {
+                            status: 3
+                        },
+                        {
+                            where: { id: tripId }
+                        }
+                    );
                     return res.status(400).json({
                         status: "Fail",
-                        message: "Booking ticket unsuccessfully!!!",
+                        message: "Booking ticket fail"
                     });
                 }
             } else {
                 return res.status(400).json({
                     status: "Fail",
-                    message: "Invalid trip!!!",
+                    message: "Invalid Trip"
                 });
             }
         } else {
             return res.status(400).json({
                 status: "Fail",
-                message: "You have already booked your ticket for this trip!!!",
+                message: "You have already booked your ticket for this trip"
             });
         }
     } catch (err) {
         return res.status(500).json({
             status: "Fail",
-            message: err.message,
+            message: err.message
         });
     }
-}
+};
 
 module.exports = {
-    ticketReservation,
+    ticketReservation
 };

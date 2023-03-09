@@ -6,7 +6,7 @@ const checkInTicket = async (req, res) => {
         if (idTicket == undefined) {
             return res.status(400).json({
                 status: "Fail",
-                message: "Missing param !!!",
+                message: "Ticket ID is required",
             });
         }
         const ticket = await Ticket.findByPk(idTicket);
@@ -14,7 +14,7 @@ const checkInTicket = async (req, res) => {
         if (ticket == undefined) {
             return res.status(404).json({
                 status: "Fail",
-                message: "Ticket not found!!!",
+                message: "Ticket not found",
             });
         }
         const trip = await Trip.findByPk(ticket.trip_id);
@@ -22,26 +22,34 @@ const checkInTicket = async (req, res) => {
         if (trip == undefined) {
             return res.status(404).json({
                 status: "Fail",
-                message: "Trip not found!!!",
+                message: "Trip not found",
             });
         }
         if (trip.status === 2) {
-            await Ticket.update(
-                {
-                    status: false,
-                    updatedAt: currentDate(),
-                },
-                {
-                    where: { id: idTicket },
+            if (ticket.status === true) {
+                await Ticket.update(
+                    {
+                        status: false,
+                        checkInAt: currentDate().slice(-8),
+                        updatedAt: currentDate(),
+                    },
+                    {
+                        where: { id: idTicket },
+                    });
+                return res.status(200).json({
+                    status: "Success",
+                    message: "Check in successfully",
                 });
-            return res.status(200).json({
-                status: "Success",
-                message: "Check-in successfully !!!",
-            });
+            } else {
+                return res.status(400).json({
+                    status: "Fail",
+                    message: "Ticket is already used",
+                });
+            }
         } else {
-            return res.status(200).json({
+            return res.status(400).json({
                 status: "Fail",
-                message: "It's not time for Check-In !!!",
+                message: "Your trip hasn't started yet",
             });
         }
     } catch (err) {

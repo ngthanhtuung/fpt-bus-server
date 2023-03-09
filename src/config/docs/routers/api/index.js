@@ -22,6 +22,8 @@ const getTodayTrip = require("./Trip/getTodayTrip.docs");
 const createTrip = require("./Trip/createTrip.docs");
 const updateTrip = require("./Trip/updateTrip.docs");
 const changeTripStatus = require("./Trip/changeTripStatus.docs");
+const bookingTicket = require("./Ticket/bookingTicket.docs");
+const checkinTicket = require("./Ticket/checkinTicket.docs");
 
 module.exports = {
   paths: {
@@ -108,6 +110,14 @@ module.exports = {
     },
     "/api/v1/trip/change-status/{id}": {
       ...changeTripStatus
+    },
+
+    //Ticket API
+    "/api/v1/ticket/booking": {
+      ...bookingTicket
+    },
+    "/api/v1/ticket/check-in/{idTicket}": {
+      ...checkinTicket
     }
   }
 };

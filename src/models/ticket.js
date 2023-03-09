@@ -18,11 +18,14 @@ module.exports = (sequelize, DataTypes) => {
     {
       trip_id: DataTypes.STRING,
       user_id: DataTypes.STRING,
+      checkInAt: DataTypes.TIME,
+      qrUrl: DataTypes.STRING,
       status: DataTypes.BOOLEAN,
     },
     {
       sequelize,
       modelName: "Ticket",
+      tableName: "Ticket"
     }
   );
   return Ticket;

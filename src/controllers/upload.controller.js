@@ -3,29 +3,41 @@ const {
   getStorage,
   ref,
   uploadString,
-  getDownloadURL,
+  getDownloadURL
 } = require("firebase/storage");
 const moment = require("moment-timezone");
 const firebaseConfig = require("../config/firebase.config");
 initializeApp(firebaseConfig);
 
+const uploadQRCode = async (data, ticketId) => {
+  try {
+    const storage = getStorage();
+    let storageRef, urlImage;
+    const timeNow = moment.tz().format();
+    storageRef = ref(storage, `qr-code/qr-code-${timeNow}-${ticketId}`);
+    const uploadBase64 = await uploadString(
+      storageRef,
+      data,
+      "data_url"
+    );
+    // get url image
+    urlImage = await getDownloadURL(storageRef);
+    console.log("urlImage: ", urlImage);
+    return urlImage;
+  } catch (err) {
+    return null;
+  }
+}
+
 const uploadFile = async (req, res) => {
   try {
     // get image from body
     const { type, imageBase64, userId } = req.body;
-    console.log(
-      "type: ",
-      type,
-      ", imageBase64: ",
-      imageBase64,
-      ",idUser: ",
-      userId
-    );
     //check input param
     if (type === undefined || imageBase64 === undefined) {
       return res.status(400).json({
         status: "Fail",
-        messages: "Missing param!!!",
+        messages: "Missing param!!!"
       });
     }
     //get storage in fire base
@@ -50,24 +62,25 @@ const uploadFile = async (req, res) => {
       "data_url"
     );
     console.log(uploadBase64);
-    // get url image
+    // get url image 
     urlImage = await getDownloadURL(storageRef);
     console.log("urlImage: ", urlImage);
     res.status(200).json({
       status: "Success",
       messages: "Upload Successfully!!",
       data: {
-        imageUrl: urlImage,
-      },
+        imageUrl: urlImage
+      }
     });
   } catch (error) {
     res.status(500).json({
       status: "Fail",
-      message: error.message,
+      message: error.message
     });
   }
 };
 
 module.exports = {
   uploadFile,
+  uploadQRCode
 };

@@ -7,7 +7,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV4
       },
       trip_id: {
         type: Sequelize.UUID,
@@ -15,34 +15,41 @@ module.exports = {
         unique: true,
         references: {
           model: "Trip",
-          key: "id",
-        },
+          key: "id"
+        }
       },
       user_id: {
         type: Sequelize.UUID,
         allowNull: false,
-        unique: true,
         references: {
           model: "Users",
-          key: "id",
-        },
+          key: "id"
+        }
+      },
+      checkInAt: {
+        type: Sequelize.TIME,
+        allowNull: true
+      },
+      qrUrl: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       status: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
-        allowNull: false,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Ticket");
-  },
+  }
 };
