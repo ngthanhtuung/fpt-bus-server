@@ -22,6 +22,7 @@ const getTodayTrip = require("./Trip/getTodayTrip.docs");
 const createTrip = require("./Trip/createTrip.docs");
 const updateTrip = require("./Trip/updateTrip.docs");
 const changeTripStatus = require("./Trip/changeTripStatus.docs");
+const getAllTicket = require('./Ticket/getAllTicket.docs');
 const bookingTicket = require("./Ticket/bookingTicket.docs");
 const checkinTicket = require("./Ticket/checkinTicket.docs");
 
@@ -113,6 +114,9 @@ module.exports = {
     },
 
     //Ticket API
+    "/api/v1/ticket": {
+      ...getAllTicket
+    },
     "/api/v1/ticket/booking": {
       ...bookingTicket
     },
