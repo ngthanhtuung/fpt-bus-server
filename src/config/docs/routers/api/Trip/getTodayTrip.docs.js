@@ -9,16 +9,10 @@ module.exports = {
     description: "Get all trip",
     parameters: [
       {
-        name: "date",
-        in: "query",
-        description: "Required for STUDENT role",
-        required: false
-      },
-      {
-        name: "route_id",
-        in: "query",
-        description: "Required for STUDENT role",
-        required: false
+        name: "key",
+        in: "path",
+        description: "Key for cache",
+        required: true
       }
     ],
     responses: {

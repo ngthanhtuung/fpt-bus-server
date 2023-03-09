@@ -8,6 +8,7 @@ const {
 const moment = require("moment-timezone");
 const firebaseConfig = require("../config/firebase.config");
 initializeApp(firebaseConfig);
+
 const uploadFile = async (req, res) => {
   try {
     // get image from body

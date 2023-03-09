@@ -14,7 +14,7 @@ const {
 
 const routeRouter = Router();
 
-routeRouter.get("/", [authenticate, authorize(["ADMIN"])], getAllRoutes);
+routeRouter.get("/", [authenticate, authorize(["ADMIN", "STUDENT"])], getAllRoutes);
 routeRouter.post("/create", [authenticate, authorize(["ADMIN"])], createRoute);
 routeRouter.put(
   "/update/:id",

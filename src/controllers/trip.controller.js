@@ -2,7 +2,7 @@ require("dotenv").config();
 const redis = require("redis");
 const client = redis.createClient(process.env.PORT_REDIS);
 const { v4: uuid } = require("uuid");
-const { Bus, Route, Trip, Users } = require("../models");
+const { Bus, Route, Trip, Users, sequelize } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 client.connect();
@@ -28,12 +28,12 @@ const createObjectTrip = async (
       "departure_time",
       "status",
       "createdAt",
-      "updatedAt",
+      "updatedAt"
     ],
     where: {
       route_id,
-      bus_id,
-    },
+      bus_id
+    }
   });
 
   const existingTripMap = new Map();
@@ -59,7 +59,7 @@ const createObjectTrip = async (
           ticket_quantity,
           status: 1,
           createdAt: currentDate(),
-          updatedAt: currentDate(),
+          updatedAt: currentDate()
         };
         trip.push(trip_obj);
       }
@@ -76,8 +76,8 @@ const checkExistedTrip = async (trip) => {
         route_id: trip.route_id,
         bus_id: trip.bus_id,
         departure_date: trip.departure_date,
-        departure_time: trip.departure_time,
-      },
+        departure_time: trip.departure_time
+      }
     });
     if (existingTrip) {
       return true;
@@ -88,62 +88,228 @@ const checkExistedTrip = async (trip) => {
     return false;
   }
 };
-//START MAIN METHOD
-const getAllTrip = async (req, res) => {
-  try {
-    const { key } = req.params;
-    const route_id = key.split("-")[0];
-    const date = key.split("-")[1];
-    const trips = await Trip.findAll({
-      attributes: [
-        "id",
-        "route_id",
-        "bus_id",
-        "ticket_quantity",
-        "departure_date",
-        "departure_time",
-        "status",
-        "createdAt",
-        "updatedAt",
-      ],
-      where: {
-        departure_date: date,
-      },
-      include: [
-        {
-          model: Bus,
-          attributes: ["license_plate", "seat_quantity"],
-          include: [
-            {
-              model: Users,
-              attributes: ["fullname"],
-            },
-          ],
-        },
-        {
-          model: Route,
-          attributes: ["departure", "destination"],
-        },
-      ],
-      order: [["departure_time", "ASC"]],
-    });
 
-    if (trips) {
-      await client.set(key, JSON.stringify(trips), {
-        EX: 3600,
-        NX: true,
+const getAllTripForDriver = async (req, res) => {
+  try {
+    const date = req.query.date || new Date().toISOString().slice(0, 10);
+    const userLoginId = req.user_id;
+    const trips = await sequelize.query(`
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
+              INNER JOIN Route R ON T.route_id = R.id
+              INNER JOIN Bus B ON T.bus_id = B.id
+              INNER JOIN Users U ON B.driver_id = U.id
+    WHERE T.departure_date = '${date}' AND U.id = '${userLoginId}'
+    ORDER BY T.departure_time ASC;
+    `);
+    if (trips[0].length > 0) {
+      res.status(200).json({
+        status: "Success",
+        message: "Get all trip successfully",
+        data: trips[0]
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Trip not found"
       });
     }
-    res.status(200).json({
-      status: "Success",
-      messages: "Get all trip successfully!",
-      data: trips,
-    });
   } catch (err) {
     res.status(500).json({
       status: "Fail",
-      message: err.message,
+      message: err.message
     });
+  }
+};
+
+const getTripForStudent = async (req, res) => {
+  try {
+    const route_id = req.query.route_id;
+    const date = req.query.date || new Date().toISOString.slice(0, 10);
+    if (
+      !route_id ||
+      route_id === "" ||
+      route_id === undefined ||
+      route_id === null
+    ) {
+      res.status(400).json({
+        status: "Fail",
+        message: "Route id is required"
+      });
+    } else {
+      const trips = await sequelize.query(`
+      SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+      FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
+                INNER JOIN Route R ON T.route_id = R.id
+                INNER JOIN Bus B ON T.bus_id = B.id
+                INNER JOIN Users U ON B.driver_id = U.id
+      WHERE T.departure_date = '${date}' AND route_id = '${route_id}'
+      ORDER BY T.departure_time ASC;
+      `);
+      if (trips[0].length > 0) {
+        res.status(200).json({
+          status: "Success",
+          message: "Get all trip successfully",
+          data: trips[0]
+        });
+      } else {
+        res.status(404).json({
+          status: "Fail",
+          message: "Trip not found"
+        });
+      }
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message
+    });
+  }
+};
+
+const getTripForAdmin = async (req, res) => {
+  try {
+    const date = req.query.date;
+    const trips = await sequelize.query(`
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
+              INNER JOIN Route R ON T.route_id = R.id
+              INNER JOIN Bus B ON T.bus_id = B.id
+              INNER JOIN Users U ON B.driver_id = U.id
+    ${date ? `WHERE T.departure_date = '${date}'` : ""} 
+    ORDER BY T.departure_time ASC;
+    `);
+    if (trips[0].length > 0) {
+      res.status(200).json({
+        status: "Success",
+        message: "Get all trip successfully",
+        data: trips[0]
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Trip not found"
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message
+    });
+  }
+};
+
+//STSRT TRIP TODAY
+const getTripTodayForDriver = async (req, res) => {
+  try {
+    const { key } = req.params;
+    const userLoginId = key.slice(11, key.length);
+    const date = new Date().toISOString().slice(0, 10);
+    const trips = await sequelize.query(`
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
+              INNER JOIN Route R ON T.route_id = R.id
+              INNER JOIN Bus B ON T.bus_id = B.id
+              INNER JOIN Users U ON B.driver_id = U.id
+    WHERE T.departure_date = '${date}' AND U.id = '${userLoginId}'
+    ORDER BY T.departure_time ASC;
+    `);
+    if (trips[0].length > 0) {
+      await client.set(key, JSON.stringify(trips[0]), {
+        EX: 3600,
+        NX: true
+      });
+      res.status(200).json({
+        status: "Success",
+        message: "Get all trip successfully",
+        data: trips[0]
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Trip not found"
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.messages
+    });
+  }
+};
+
+const getTripTodayForStudent = async (req, res) => {
+  try {
+    const { key } = req.params;
+    const date = new Date().toISOString().slice(0, 10);
+    const trips = await sequelize.query(`
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
+              INNER JOIN Route R ON T.route_id = R.id
+              INNER JOIN Bus B ON T.bus_id = B.id
+              INNER JOIN Users U ON B.driver_id = U.id
+    WHERE T.departure_date = '${date}'
+    ORDER BY T.departure_time ASC;
+    `);
+    if (trips[0].length > 0) {
+      await client.set(key, JSON.stringify(trips[0]), {
+        EX: 3600,
+        NX: true
+      });
+      res.status(200).json({
+        status: "Success",
+        message: "Get all trip successfully",
+        data: trips[0]
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Trip not found"
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.messages
+    });
+  }
+};
+
+const getTripToday = async (req, res) => {
+  try {
+    const role = req.role_name;
+    switch (role) {
+      case "DRIVER":
+        await getTripTodayForDriver(req, res);
+        break;
+      case "STUDENT":
+        await getTripTodayForStudent(req, res);
+        break;
+      default:
+        await getTripTodayForStudent(req, res);
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      messages: err.messages
+    });
+  }
+};
+//END TRIP TODAY
+
+//START MAIN METHOD
+const getAllTrip = async (req, res) => {
+  const role = req.role_name;
+  switch (role) {
+    case "ADMIN":
+      await getTripForAdmin(req, res);
+      break;
+    case "DRIVER":
+      await getAllTripForDriver(req, res);
+      break;
+    case "STUDENT":
+      await getTripForStudent(req, res);
+      break;
   }
 };
 
@@ -154,17 +320,17 @@ const createTrip = async (req, res) => {
       bus_id,
       departure_dates,
       departure_times,
-      ticket_quantity,
+      ticket_quantity
     } = req.body;
     const bus = await Bus.findOne({
       where: {
-        id: bus_id,
-      },
+        id: bus_id
+      }
     });
     if (ticket_quantity > bus.seat_quantity) {
       res.status(400).json({
         status: "Fail",
-        message: `Ticket quantity must be less than or equal ${bus.seat_quantity}`,
+        message: `Ticket quantity must be less than or equal ${bus.seat_quantity}`
       });
     } else {
       const { trip, duplicates } = await createObjectTrip(
@@ -191,7 +357,7 @@ const createTrip = async (req, res) => {
               duplicates.length > 1 ? `trips` : `trip`
             } already exists`,
             duplicates: duplicates,
-            data: trip,
+            data: trip
           });
         } else {
           res.status(200).json({
@@ -201,20 +367,20 @@ const createTrip = async (req, res) => {
             } successfully, ${duplicates.length} ${
               duplicates.length > 1 ? `trips` : `trip`
             } already exists`,
-            data: trip,
+            data: trip
           });
         }
       } else {
         res.status(400).json({
           status: "Fail",
-          message: "Create trip failed",
+          message: "Create trip failed"
         });
       }
     }
   } catch (err) {
     res.status(500).json({
       status: "Fail",
-      message: err.message,
+      message: err.message
     });
   }
 };
@@ -228,7 +394,7 @@ const updateTrip = async (req, res) => {
       departure_date,
       departure_time,
       ticket_quantity,
-      status,
+      status
     } = req.body;
     const trip = await Trip.findOne({
       attributes: [
@@ -240,11 +406,11 @@ const updateTrip = async (req, res) => {
         "departure_time",
         "status",
         "createdAt",
-        "updatedAt",
+        "updatedAt"
       ],
       where: {
-        id,
-      },
+        id
+      }
     });
     if (trip) {
       const checkTrip = {
@@ -252,14 +418,14 @@ const updateTrip = async (req, res) => {
         route_id,
         departure_date,
         departure_time,
-        ticket_quantity,
+        ticket_quantity
       };
       const check = await checkExistedTrip(checkTrip);
       console.log("Check Existed trip ", check);
       if (check) {
         res.status(400).json({
           status: "Fail",
-          message: "Trip already exists",
+          message: "Trip already exists"
         });
       } else {
         const updatedTrip = await Trip.update(
@@ -270,12 +436,12 @@ const updateTrip = async (req, res) => {
             departure_time,
             ticket_quantity,
             status,
-            updatedAt: currentDate(),
+            updatedAt: currentDate()
           },
           {
             where: {
-              id,
-            },
+              id
+            }
           }
         );
         if (updatedTrip) {
@@ -289,10 +455,10 @@ const updateTrip = async (req, res) => {
               "departure_time",
               "status",
               "createdAt",
-              "updatedAt",
+              "updatedAt"
             ],
             where: {
-              id,
+              id
             },
             include: [
               {
@@ -301,38 +467,38 @@ const updateTrip = async (req, res) => {
                 include: [
                   {
                     model: Users,
-                    attributes: ["fullname"],
-                  },
-                ],
+                    attributes: ["fullname"]
+                  }
+                ]
               },
               {
                 model: Route,
-                attributes: ["departure", "destination"],
-              },
-            ],
+                attributes: ["departure", "destination"]
+              }
+            ]
           });
           res.status(200).json({
             status: "Success",
             message: "Update trip successfully",
-            data: trip,
+            data: trip
           });
         } else {
           res.status(400).json({
             status: "Fail",
-            message: "Update trip failed",
+            message: "Update trip failed"
           });
         }
       }
     } else {
       res.status(404).json({
         status: "Fail",
-        message: "Trip not found",
+        message: "Trip not found"
       });
     }
   } catch (err) {
     res.status(500).json({
       status: "Fail",
-      message: err.message,
+      message: err.message
     });
   }
 };
@@ -352,10 +518,10 @@ const changeStatus = async (req, res) => {
         "departure_time",
         "status",
         "createdAt",
-        "updatedAt",
+        "updatedAt"
       ],
       where: {
-        id,
+        id
       },
       include: [
         {
@@ -364,15 +530,15 @@ const changeStatus = async (req, res) => {
           include: [
             {
               model: Users,
-              attributes: ["fullname"],
-            },
-          ],
+              attributes: ["fullname"]
+            }
+          ]
         },
         {
           model: Route,
-          attributes: ["departure", "destination"],
-        },
-      ],
+          attributes: ["departure", "destination"]
+        }
+      ]
     });
     if (trip) {
       if (status !== 2) {
@@ -381,9 +547,9 @@ const changeStatus = async (req, res) => {
           trip.updatedDate = currentDate();
           await trip.save();
         } else {
-          return res.status(403).json({
+          return res.status(400).json({
             status: "Fail",
-            message: "You don't have permission to do this action",
+            message: "You don't have permission to do this action"
           });
         }
       } else {
@@ -394,25 +560,25 @@ const changeStatus = async (req, res) => {
         } else {
           return res.status(403).json({
             status: "Fail",
-            message: "You don't have permission to do this action",
+            message: "You don't have permission to do this action"
           });
         }
       }
       res.status(200).json({
         status: "Success",
         message: `Trip status is updated!`,
-        data: trip,
+        data: trip
       });
     } else {
       res.status(404).json({
         status: "Fail",
-        message: "Trip not found",
+        message: "Trip not found"
       });
     }
   } catch (err) {
     res.status(500).json({
       status: "Fail",
-      message: err.message,
+      message: err.message
     });
   }
 };
@@ -424,4 +590,5 @@ module.exports = {
   createTrip,
   updateTrip,
   changeStatus,
+  getTripToday
 };
