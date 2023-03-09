@@ -11,17 +11,12 @@ const client = redis.createClient(process.env.PORT_REDIS);
 const checkDataCache = async (req, res, next) => {
   try {
     const { key } = req.params;
-    if (!key) {
-      next();
-    }
     const cacheResults = await client.get(key);
     if (cacheResults) {
       res.status(200).json({
         status: "Success",
         isCache: true,
-        data: {
-          cacheResults: JSON.parse(cacheResults),
-        },
+        data: JSON.parse(cacheResults)
       });
       return;
     }
@@ -29,10 +24,10 @@ const checkDataCache = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({
       status: "Fail",
-      messages: error.message,
+      messages: error.message
     });
   }
 };
 module.exports = {
-  checkDataCache,
+  checkDataCache
 };

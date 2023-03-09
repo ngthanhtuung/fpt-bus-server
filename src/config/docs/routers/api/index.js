@@ -17,6 +17,8 @@ const getAllRoute = require("./Route/getAllRoute.docs");
 const createRoute = require("./Route/createRoute.docs");
 const changeStatusRoute = require("./Route/changeStatusRoute.docs");
 const updateRoute = require("./Route/updateRoute.docs");
+const getAllTrip = require("./Trip/getAllTrip.docs");
+const getTodayTrip = require("./Trip/getTodayTrip.docs");
 const createTrip = require("./Trip/createTrip.docs");
 const updateTrip = require("./Trip/updateTrip.docs");
 const changeTripStatus = require("./Trip/changeTripStatus.docs");
@@ -25,81 +27,87 @@ module.exports = {
   paths: {
     //Authentication API
     "/api/v1/auth/sign-in": {
-      ...signin,
+      ...signin
     },
 
     //User API
     "/api/v1/users": {
-      ...getUsers,
+      ...getUsers
     },
     "/api/v1/users/create": {
-      ...createUser,
+      ...createUser
     },
     "/api/v1/users/change-status/{id}": {
-      ...changeStatusUser,
+      ...changeStatusUser
     },
 
     //Upload File
     "/api/v1/upload-file": {
-      ...uploadFile,
+      ...uploadFile
     },
 
     //Notification API
     "/api/v1/notification": {
-      ...pushNotification,
+      ...pushNotification
     },
 
     //Bus API
     "/api/v1/bus": {
-      ...getAllBus,
+      ...getAllBus
     },
     "/api/v1/bus/create": {
-      ...createBus,
+      ...createBus
     },
     "/api/v1/bus/update/{id}": {
-      ...updateBus,
+      ...updateBus
     },
     "/api/v1/bus/change-status/{id}": {
-      ...changeStatus,
+      ...changeStatus
     },
 
     //Station API
     "/api/v1/station": {
-      ...getAllStation,
+      ...getAllStation
     },
     "/api/v1/station/create": {
-      ...createStation,
+      ...createStation
     },
     "/api/v1/station/update/{id}": {
-      ...updateStation,
+      ...updateStation
     },
     "/api/v1/station/change-status/{id}": {
-      ...changeStatusStation,
+      ...changeStatusStation
     },
 
     //Route API
     "/api/v1/route": {
-      ...getAllRoute,
+      ...getAllRoute
     },
     "/api/v1/route/create": {
-      ...createRoute,
+      ...createRoute
     },
     "/api/v1/route/update/{id}": {
-      ...updateRoute,
+      ...updateRoute
     },
     "/api/v1/route/change-status/{id}": {
-      ...changeStatusRoute,
+      ...changeStatusRoute
     },
 
     //Trip API
+    "/api/v1/trip": {
+      ...getAllTrip
+    },
+    "/api/v1/trip/{key}": {
+      ...getTodayTrip
+    },
     "/api/v1/trip/create": {
-      ...createTrip,
+      ...createTrip
     },
     "/api/v1/trip/update/{id}": {
-      ...updateTrip,
+      ...updateTrip
     },
     "/api/v1/trip/change-status/{id}": {
-      ...changeTripStatus,
+      ...changeTripStatus
     }
-  },
+  }
 };
