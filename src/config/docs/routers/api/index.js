@@ -17,6 +17,9 @@ const getAllRoute = require("./Route/getAllRoute.docs");
 const createRoute = require("./Route/createRoute.docs");
 const changeStatusRoute = require("./Route/changeStatusRoute.docs");
 const updateRoute = require("./Route/updateRoute.docs");
+const createTrip = require("./Trip/createTrip.docs");
+const updateTrip = require("./Trip/updateTrip.docs");
+const changeTripStatus = require("./Trip/changeTripStatus.docs");
 
 module.exports = {
   paths: {
@@ -24,6 +27,7 @@ module.exports = {
     "/api/v1/auth/sign-in": {
       ...signin,
     },
+
     //User API
     "/api/v1/users": {
       ...getUsers,
@@ -39,10 +43,12 @@ module.exports = {
     "/api/v1/upload-file": {
       ...uploadFile,
     },
+
     //Notification API
     "/api/v1/notification": {
       ...pushNotification,
     },
+
     //Bus API
     "/api/v1/bus": {
       ...getAllBus,
@@ -84,5 +90,16 @@ module.exports = {
     "/api/v1/route/change-status/{id}": {
       ...changeStatusRoute,
     },
+
+    //Trip API
+    "/api/v1/trip/create": {
+      ...createTrip,
+    },
+    "/api/v1/trip/update/{id}": {
+      ...updateTrip,
+    },
+    "/api/v1/trip/change-status/{id}": {
+      ...changeTripStatus,
+    }
   },
 };

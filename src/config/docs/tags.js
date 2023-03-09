@@ -13,6 +13,10 @@ module.exports = {
       description: "Firebase related routes",
     },
     {
+      name: "Trip",
+      description: "Trip related routes",
+    },
+    {
       name: "Route",
       description: "Route related routes",
     },
