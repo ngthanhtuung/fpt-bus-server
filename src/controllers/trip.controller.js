@@ -2,7 +2,7 @@ require("dotenv").config();
 const redis = require("redis");
 const client = redis.createClient(process.env.PORT_REDIS);
 const { v4: uuid } = require("uuid");
-const { Bus, Route, Trip, Users } = require("../models");
+const { Bus, Route, Trip, Users, sequelize } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 client.connect();
@@ -88,63 +88,138 @@ const checkExistedTrip = async (trip) => {
     return false;
   }
 };
-//START MAIN METHOD
-const getAllTrip = async (req, res) => {
-  try {
-    const { key } = req.params;
-    const route_id = key.split("-")[0];
-    const date = key.split("-")[1];
-    const trips = await Trip.findAll({
-      attributes: [
-        "id",
-        "route_id",
-        "bus_id",
-        "ticket_quantity",
-        "departure_date",
-        "departure_time",
-        "status",
-        "createdAt",
-        "updatedAt",
-      ],
-      where: {
-        departure_date: date,
-      },
-      include: [
-        {
-          model: Bus,
-          attributes: ["license_plate", "seat_quantity"],
-          include: [
-            {
-              model: Users,
-              attributes: ["fullname"],
-            },
-          ],
-        },
-        {
-          model: Route,
-          attributes: ["departure", "destination"],
-        },
-      ],
-      order: [["departure_time", "ASC"]],
-    });
 
-    if (trips) {
-      await client.set(key, JSON.stringify(trips), {
-        EX: 3600,
-        NX: true,
-      });
-    }
-    res.status(200).json({
-      status: "Success",
-      messages: "Get all trip successfully!",
-      data: trips,
-    });
+const getAllTripStudent = (req, res, date) => {
+  try {
   } catch (err) {
     res.status(500).json({
       status: "Fail",
-      message: err.message,
+      messages: err.message,
     });
   }
+};
+
+const getAllTripDriver = async (req, res) => {
+  try {
+    const { key } = req.params;
+    const userLoginId = req.user_id;
+    const today = new Date().toISOString().slice(0, 10);
+    const date = req.query.date || today;
+    console.log("Date: ", date);
+    const trips = await sequelize.query(`
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
+              INNER JOIN Route R ON T.route_id = R.id
+              INNER JOIN Bus B ON T.bus_id = B.id
+              INNER JOIN Users U ON B.driver_id = U.id
+    WHERE T.departure_date = '${date}' AND U.id = '${userLoginId}'
+    ORDER BY T.departure_time ASC;
+    `);
+    if (trips) {
+      res.status(200).json({
+        status: "Success",
+        message: "Get all trip successfully",
+        data: trips[0],
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      messages: err.message,
+    });
+  }
+};
+
+const getAllTripAdmin = (req, res) => {
+  try {
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      messages: err.message,
+    });
+  }
+};
+
+//START MAIN METHOD
+const getAllTrip = async (req, res) => {
+  const role = req.role_name;
+
+  switch (role) {
+    case "ADMIN":
+      break;
+    case "DRIVER":
+      await getAllTripDriver(req, res);
+      break;
+    case "STUDENT":
+      break;
+  }
+
+  // try {
+  //   const { key } = req.params;
+  //   const userLoginId = req.user_id;
+  //   const role = req.role_name;
+  //   const today = new Date().toISOString().slice(0, 10);
+  //   const date = req.query.date || today;
+
+  //   switch (role) {
+  //     case "ADMIN":
+  //       break;
+  //     case "DRIVER":
+  //       break;
+  //     case "STUDENT":
+  //       break;
+  //   }
+  //   const trips = await Trip.findAll({
+  //     attributes: [
+  //       "id",
+  //       "route_id",
+  //       "bus_id",
+  //       "ticket_quantity",
+  //       "departure_date",
+  //       "departure_time",
+  //       "status",
+  //       "createdAt",
+  //       "updatedAt",
+  //     ],
+  //     where: {
+  //       departure_date: date,
+  //     },
+  //     include: [
+  //       {
+  //         model: Bus,
+  //         attributes: ["license_plate", "seat_quantity"],
+  //         include: [
+  //           {
+  //             model: Users,
+  //             attributes: ["fullname"],
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         model: Route,
+  //         attributes: ["departure", "destination"],
+  //       },
+  //     ],
+  //     order: [["departure_time", "ASC"]],
+  //   });
+
+  //   if (trips) {
+  //     await client.set(key, JSON.stringify(trips), {
+  //       EX: 3600,
+  //       NX: true,
+  //     });
+  //   }
+  //   res.status(200).json({
+  //     status: "Success",
+  //     messages: "Get all trip successfully!",
+  //     data: trips,
+  //   });
+  // } catch (err) {
+  //   res.status(500).json({
+  //     status: "Fail",
+  //     message: err.message,
+  //   });
+  // }
 };
 
 const createTrip = async (req, res) => {

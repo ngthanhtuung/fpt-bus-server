@@ -9,13 +9,12 @@ const client = redis.createClient(process.env.PORT_REDIS);
 })();
 
 const checkDataCache = async (req, res, next) => {
-  const { key } = req.params;
   try {
+    const { key } = req.params;
+    if (!key) {
+      next();
+    }
     const cacheResults = await client.get(key);
-    /**
-     * if cache results not empty -> get data from cache
-     * else cache results empty -> set query database and set data (key:value)
-     **/
     if (cacheResults) {
       res.status(200).json({
         status: "Success",
