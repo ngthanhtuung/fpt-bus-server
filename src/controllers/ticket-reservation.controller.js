@@ -1,8 +1,84 @@
 const { v4: uuid } = require("uuid");
-const { Ticket, Trip } = require("../models");
+const { Ticket, Trip, Bus, Users, Route } = require("../models");
 const currentDate = require("../utils/currentDate");
 const { generateQRCode } = require("../utils/qrCode")
 const { uploadQRCode } = require('./upload.controller');
+
+const getAllTicket = async (req, res) => {
+    try {
+        const userLoginId = req.user_id;
+        const limit =
+            !isNaN(Math.abs(parseInt(req.query.limit))) &&
+                Math.abs(parseInt(req.query.limit)) > 0
+                ? Math.abs(parseInt(req.query.limit))
+                : 10;
+        const page =
+            !isNaN(Math.abs(parseInt(req.query.page))) &&
+                Math.abs(parseInt(req.query.limit)) > 0
+                ? Math.abs(parseInt(req.query.page))
+                : 1;
+        const offset = (page - 1) * limit;
+        const numPage = Math.ceil((await Bus.count()) / limit);
+        const { status } = req.query;
+
+        const whereClause = {
+            user_id: userLoginId
+        }
+        if (
+            status != undefined &&
+            status != "" &&
+            status != null &&
+            status != "null" &&
+            status != "undefined"
+        ) {
+            whereClause.status = JSON.parse(status)
+        }
+        const { count, rows } = await Ticket.findAndCountAll({
+            where: whereClause,
+            offset: offset,
+            limit: limit,
+            include: [
+                {
+                    model: Trip,
+                    attributes: ["departure_date", "departure_time", "ticket_quantity"],
+                    include: [
+                        {
+                            model: Bus,
+                            attributes: ["license_plate", "seat_quantity"],
+                            include: [
+                                {
+                                    model: Users,
+                                    attributes: ["fullname"]
+                                }
+                            ]
+                        },
+                        {
+                            model: Route,
+                            attributes: ["route_name", "departure", "destination"]
+                        }
+                    ]
+                }
+            ]
+        });
+        res.status(200).json({
+            status: "Success",
+            message: "Get all ticket successfully",
+            pagination: {
+                total: count,
+                limit: limit,
+                current_page: page,
+                total_page: numPage
+            },
+            data: rows
+        })
+    } catch (err) {
+        return res.status(500).json({
+            status: "Fail",
+            message: err.message
+        });
+    }
+}
+
 const ticketReservation = async (req, res) => {
     try {
         //Pass param user id and trip id in request body
@@ -103,5 +179,6 @@ const ticketReservation = async (req, res) => {
 };
 
 module.exports = {
-    ticketReservation
+    ticketReservation,
+    getAllTicket
 };

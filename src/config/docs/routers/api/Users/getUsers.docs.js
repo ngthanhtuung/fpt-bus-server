@@ -35,6 +35,7 @@ module.exports = {
         required: false,
         description: "Limit number of users",
         type: "number",
+        default: 10
       },
       {
         name: "page",
@@ -42,6 +43,7 @@ module.exports = {
         required: false,
         description: "Page number",
         type: "number",
+        default: 1
       },
     ],
     responses: {
