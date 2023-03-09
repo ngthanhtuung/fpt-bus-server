@@ -2,7 +2,6 @@ const Bus = require("./models/bus.docs");
 const RoleType = require("./models/roletype.docs");
 const Route_Station = require("./models/route_station.docs");
 const Route = require("./models/route.docs");
-const Seat = require("./models/seat.docs");
 const Station = require("./models/station.docs");
 const Ticket = require("./models/ticket.docs");
 const Transaction = require("./models/transaction.docs");
@@ -27,7 +26,6 @@ module.exports = {
       ...RoleType,
       ...Route_Station,
       ...Route,
-      ...Seat,
       ...Station,
       ...Ticket,
       ...Transaction,

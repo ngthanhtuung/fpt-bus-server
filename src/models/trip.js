@@ -13,18 +13,22 @@ module.exports = (sequelize, DataTypes) => {
       Trip.belongsTo(models.Route, { foreignKey: "route_id" });
       Trip.belongsTo(models.Bus, { foreignKey: "bus_id" });
       Trip.hasMany(models.Ticket, { foreignKey: "trip_id" });
+      Trip.belongsTo(models.Trip_Status, { foreignKey: "status" });
     }
   }
   Trip.init(
     {
       route_id: DataTypes.STRING,
-      departure: DataTypes.TIME,
       bus_id: DataTypes.STRING,
+      departure_date: DataTypes.DATEONLY,
+      departure_time: DataTypes.TIME,
+      status: DataTypes.INTEGER,
       ticket_quantity: DataTypes.INTEGER,
     },
     {
       sequelize,
       modelName: "Trip",
+      tableName: "Trip",
     }
   );
   return Trip;

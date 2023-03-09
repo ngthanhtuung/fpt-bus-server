@@ -23,13 +23,13 @@ stationRouter.post(
   createStation
 );
 
-stationRouter.post("/update/:id", [
+stationRouter.put("/update/:id", [
   authenticate,
   authorize(["ADMIN"]),
   updateStation,
 ]);
 
-stationRouter.post(
+stationRouter.put(
   "/change-status/:id",
   [authenticate, authorize(["ADMIN"])],
   changeStatusStation

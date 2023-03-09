@@ -1,6 +1,7 @@
 const { v4: uuid } = require("uuid");
 const validator = require("validator");
-const { Bus, Users, sequelize } = require("../models");
+const { Bus, Users, sequelize, Trip } = require("../models");
+const currentDate = require("../utils/currentDate");
 
 const checkLicensePlate = (license_plate) => {
   const regex = /^(?!13|42)(1[1-9]|[2-9]\d)[A-Z]-\d{3}\.\d{2}$/;
@@ -26,6 +27,24 @@ const validate = (license_plate, seat_quantity, driver_id) => {
   return errors;
 };
 
+const checkBusIsOperating = async (busId) => {
+  try {
+    const numOfBus = await Trip.findAll({
+      where: {
+        bus_id: busId,
+        status: 1
+      }
+    });
+    if (numOfBus.length > 0) {
+      return numOfBus.length;
+    } else {
+      return 0;
+    }
+  } catch (err) {
+    return -1;
+  }
+}
+
 const getAllBus = async (req, res) => {
   try {
     const page = req.params.page || 1;
@@ -44,9 +63,9 @@ const getAllBus = async (req, res) => {
       message: "Get all bus succesfully!",
       pagination: {
         total: busList[0].length,
-        limit,
-        page,
-        numPage,
+        per_page: limit,
+        current_page: page,
+        total_page: numPage,
       },
       data: busList[0],
     });
@@ -82,8 +101,8 @@ const createBus = async (req, res) => {
         seat_quantity,
         driver_id,
         status: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: currentDate(),
+        updatedAt: currentDate(),
       }).then((bus) => {
         res.status(201).json({
           status: "Success",
@@ -121,7 +140,7 @@ const updateBus = async (req, res) => {
             seat_quantity,
             driver_id,
             status,
-            updatedAt: new Date(),
+            updatedAt: currentDate(),
           },
           {
             where: { id },
@@ -157,31 +176,40 @@ const changeStatus = async (req, res) => {
       where: { id },
     });
     if (bus) {
-      await Bus.update(
-        {
-          status: !bus.status,
-          updatedAt: new Date(),
-        },
-        {
-          where: { id },
-        }
-      ).then(() => {
-        Bus.findByPk(id).then((bus) => {
-          if (bus.status === false) {
-            res.status(200).json({
-              status: "Success",
-              message: "Bus is disabled!",
-              data: bus,
-            });
-          } else {
-            res.status(200).json({
-              status: "Success",
-              message: "Bus is enabled!",
-              data: bus,
-            });
-          }
+      const numOfBus = await checkBusIsOperating(id);
+      if (numOfBus > 0) {
+        res.status(400).json({
+          status: "Fail",
+          message: `There are ${numOfBus} ${numOfBus > 1 ? `trips` : `trip`} left using this bus, please moderate to make this action`,
         });
-      });
+      } else {
+        await Bus.update(
+          {
+            status: !bus.status,
+            updatedAt: currentDate(),
+          },
+          {
+            where: { id },
+          }
+        ).then(() => {
+          Bus.findByPk(id).then((bus) => {
+            if (bus.status === false) {
+              res.status(200).json({
+                status: "Success",
+                message: "Bus is disabled!",
+                data: bus,
+              });
+            } else {
+              res.status(200).json({
+                status: "Success",
+                message: "Bus is enabled!",
+                data: bus,
+              });
+            }
+          });
+        });
+      }
+
     } else {
       res.status(404).json({
         status: "Fail",
