@@ -381,7 +381,7 @@ const changeStatus = async (req, res) => {
           trip.updatedDate = currentDate();
           await trip.save();
         } else {
-          return res.status(403).json({
+          return res.status(400).json({
             status: "Fail",
             message: "You don't have permission to do this action",
           });
