@@ -13,7 +13,6 @@ const FCM = new fcm(certPath);
 
 const pushNotiByTopic = (topic, title, content) => {
   try {
-    console.log(`\n\ntopic: ${topic}, title: ${title}, content: ${content}`);
     const message = {
       notification: {
         title: title,
@@ -22,10 +21,8 @@ const pushNotiByTopic = (topic, title, content) => {
       topic: topic
     };
     admin.messaging().send(message).then((response) => {
-      console.log('Successfully sent message:', response);
       return true;
     }).catch((error) => {
-      console.log('Error sending message:', error);
       return false;
     });
 
