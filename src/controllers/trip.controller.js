@@ -46,8 +46,16 @@ const createObjectTrip = async (
       "updatedAt"
     ],
     where: {
-      route_id,
-      bus_id
+      [Op.or]: [
+        { route_id },
+        { bus_id }
+      ],
+      departure_date: {
+        [Op.in]: departure_dates
+      },
+      departure_time: {
+        [Op.in]: departure_times
+      }
     }
   });
 
@@ -61,6 +69,7 @@ const createObjectTrip = async (
   for (const date of departure_dates) {
     for (const time of departure_times) {
       const key = date + "-" + time + ":00";
+      console.log(`\nKey: `, key)
       const existingTrip = existingTripMap.get(key);
       if (existingTrip) {
         duplicates.push({ date, time });
