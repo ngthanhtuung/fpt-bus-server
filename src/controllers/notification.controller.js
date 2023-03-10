@@ -5,6 +5,27 @@ const serviceAccount = require("../config/firebase-notification");
 const certPath = admin.credential.cert(serviceAccount);
 const FCM = new fcm(certPath);
 
+const pushNotiByTopic = async (topic, title, content) => {
+  try {
+    const message = {
+      notification: {
+        title: title,
+        body: content,
+      },
+      topic: topic,
+    };
+    FCM.send(message, (err, response) => {
+      if (err) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+  } catch (err) {
+    return false;
+  }
+}
+
 const pushNoti = async (req, res) => {
   const { title, content, token, topic } = req.body;
 
@@ -40,4 +61,5 @@ const pushNoti = async (req, res) => {
 
 module.exports = {
   pushNoti,
+  pushNotiByTopic
 };
