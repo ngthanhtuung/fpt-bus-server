@@ -14,6 +14,7 @@ const createStation = require("./Station/createStation.docs");
 const updateStation = require("./Station/updateStation.docs");
 const changeStatusStation = require("./Station/changeStatusStation.docs");
 const getAllRoute = require("./Route/getAllRoute.docs");
+const getRouteById = require("./Route/getRouteById.docs");
 const createRoute = require("./Route/createRoute.docs");
 const changeStatusRoute = require("./Route/changeStatusRoute.docs");
 const updateRoute = require("./Route/updateRoute.docs");
@@ -86,6 +87,9 @@ module.exports = {
     //Route API
     "/api/v1/route": {
       ...getAllRoute
+    },
+    "/api/v1/route/{routeId}": {
+      ...getRouteById
     },
     "/api/v1/route/create": {
       ...createRoute
