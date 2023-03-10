@@ -191,7 +191,7 @@ const getTripForStudent = async (req, res) => {
                 INNER JOIN Route R ON T.route_id = R.id
                 INNER JOIN Bus B ON T.bus_id = B.id
                 INNER JOIN Users U ON B.driver_id = U.id
-      WHERE T.departure_date = '${date}' AND route_id = '${route_id}'
+      WHERE T.departure_date = '${date}' AND route_id = '${route_id}' AND T.status = 1
       ORDER BY T.departure_time ASC;
       `);
       if (trips[0].length > 0) {
@@ -640,7 +640,7 @@ const changeStatus = async (req, res) => {
           trip.status = status;
           trip.updatedDate = currentDate();
           await trip.save();
-          await pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
+          pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
         } else {
           return res.status(403).json({
             status: "Fail",

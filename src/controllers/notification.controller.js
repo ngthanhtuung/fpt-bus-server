@@ -1,28 +1,34 @@
 const admin = require("firebase-admin");
 const fcm = require("fcm-notification");
+require('dotenv').config();
 const serviceAccount = require("../config/firebase-notification");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.DATABASE_URL,
+})
 
 const certPath = admin.credential.cert(serviceAccount);
 const FCM = new fcm(certPath);
 
-const pushNotiByTopic = async (topic, title, content) => {
+const pushNotiByTopic = (topic, title, content) => {
   try {
+    console.log(`\n\ntopic: ${topic}, title: ${title}, content: ${content}`);
     const message = {
       notification: {
         title: title,
         body: content,
       },
-      topic: topic,
+      topic: topic
     };
-    FCM.getMessaging().send(message)
-    // FCM.send(message, (err, response) => {
-    //   if (err) {
-    //     return false;
-    //   } else {
-    //     console.log("Noti mess: ", response)
-    //     return true;
-    //   }
-    // });
+    admin.messaging().send(message).then((response) => {
+      console.log('Successfully sent message:', response);
+      return true;
+    }).catch((error) => {
+      console.log('Error sending message:', error);
+      return false;
+    });
+
   } catch (err) {
     return false;
   }
