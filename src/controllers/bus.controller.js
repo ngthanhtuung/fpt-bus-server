@@ -26,8 +26,6 @@ const validate = (license_plate, seat_quantity, driver_id) => {
   return errors;
 };
 
-
-
 const getAllBus = async (req, res) => {
   try {
     const limit =
