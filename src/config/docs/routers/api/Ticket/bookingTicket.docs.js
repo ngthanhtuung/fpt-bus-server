@@ -14,7 +14,7 @@ module.exports = {
                     schema: {
                         type: "object",
                         properties: {
-                            trip_id: {
+                            tripId: {
                                 type: "string",
                             }
                         },

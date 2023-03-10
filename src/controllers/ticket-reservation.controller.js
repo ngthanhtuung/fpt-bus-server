@@ -92,7 +92,6 @@ const ticketReservation = async (req, res) => {
         }
         //Find trip by id
         const trip = await Trip.findByPk(tripId);
-        console.log("trip:", trip);
         if (trip == undefined) {
             return res.status(404).json({
                 status: "Fail",
