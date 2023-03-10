@@ -7,7 +7,14 @@ module.exports = {
       },
     ],
     description: "Get all route",
-    parameters: [],
+    parameters: [
+      {
+        name: "search_query",
+        in: "query",
+        description: "Search query",
+        required: false,
+      }
+    ],
     responses: {
       200: {
         description: "Get all route successfully",
