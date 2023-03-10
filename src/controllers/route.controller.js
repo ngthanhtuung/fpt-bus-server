@@ -56,11 +56,12 @@ const getCoordinates = async (stationName) => {
 
 const getAllRoutes = async (req, res) => {
   try {
-    let whereClause = {};
     const { search_query } = req.query;
+    let whereClause = {};
     if (search_query) {
       whereClause = {
         [Op.or]: [
+          { route_name: { [Op.like]: `%${search_query}%` } },
           { departure: { [Op.like]: `%${search_query}%` } },
           { destination: { [Op.like]: `%${search_query}%` } },
         ],
