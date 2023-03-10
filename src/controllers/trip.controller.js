@@ -5,6 +5,7 @@ const { v4: uuid } = require("uuid");
 const { Bus, Route, Trip, Users, sequelize } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
+const { pushNotiByTopic } = require('./notification.controller')
 client.connect();
 
 const getStationBelongToTrip = async (id) => {
@@ -616,6 +617,7 @@ const changeStatus = async (req, res) => {
           trip.status = status;
           trip.updatedDate = currentDate();
           await trip.save();
+          await pushNotiByTopic(`TRIP_${trip.dataValues.deparute_date}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
         } else {
           return res.status(403).json({
             status: "Fail",
