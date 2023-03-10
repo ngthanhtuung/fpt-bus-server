@@ -208,7 +208,7 @@ const createRoute = async (req, res) => {
 const updateRoute = async (req, res) => {
   try {
     const id = req.params.id;
-    const { route_name, vstart, end, stations, status } = req.body;
+    const { route_name, start, end, stations, status } = req.body;
     const updatedStartName = (await Station.findByPk(start)).station_name;
     const updatedEndName = (await Station.findByPk(end)).station_name;
     const route = await Route.findByPk(id);
