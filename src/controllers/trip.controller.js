@@ -6,7 +6,30 @@ const { Bus, Route, Trip, Users, sequelize } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 const { pushNotiByTopic } = require('./notification.controller')
+const moment = require("moment-timezone");
+const cron = require("node-cron");
+
 client.connect();
+
+const expiredTrip = async () => {
+  const trips = await Trip.findAll({
+    where: {
+      status: 1
+    }
+  })
+  trips.forEach((trip) => {
+    const tripDate = moment.tz(trip.departure_date, 'YYYY-MM-DD', 'UTC').tz('Asia/Ho_Chi_Minh');
+    const currentDate = moment().tz('Asia/Ho_Chi_Minh');
+    if (tripDate.isBefore(currentDate, 'day')) {
+      trip.update({ status: 4 });
+    }
+  });
+}
+
+cron.schedule('0 0 * * *', () => {
+  expiredTrip();
+});
+
 
 const getStationBelongToTrip = async (id) => {
   try {
