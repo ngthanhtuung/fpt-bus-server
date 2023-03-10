@@ -56,7 +56,18 @@ const getCoordinates = async (stationName) => {
 
 const getAllRoutes = async (req, res) => {
   try {
+    const { search_query } = req.query;
+    let whereClause = {};
+    if (search_query) {
+      whereClause = {
+        [Op.or]: [
+          { departure: { [Op.like]: `%${search_query}%` } },
+          { destination: { [Op.like]: `%${search_query}%` } },
+        ],
+      };
+    }
     const routes = await Route.findAll({
+      where: whereClause,
       order: [
         ["route_name", 'ASC']
       ]
