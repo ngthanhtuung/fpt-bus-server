@@ -14,14 +14,18 @@ const createStation = require("./Station/createStation.docs");
 const updateStation = require("./Station/updateStation.docs");
 const changeStatusStation = require("./Station/changeStatusStation.docs");
 const getAllRoute = require("./Route/getAllRoute.docs");
+const getRouteById = require("./Route/getRouteById.docs");
 const createRoute = require("./Route/createRoute.docs");
 const changeStatusRoute = require("./Route/changeStatusRoute.docs");
 const updateRoute = require("./Route/updateRoute.docs");
 const getAllTrip = require("./Trip/getAllTrip.docs");
+const getTripById = require("./Trip/getTripById.docs");
 const getTodayTrip = require("./Trip/getTodayTrip.docs");
 const createTrip = require("./Trip/createTrip.docs");
 const updateTrip = require("./Trip/updateTrip.docs");
 const changeTripStatus = require("./Trip/changeTripStatus.docs");
+const getAllTicket = require('./Ticket/getAllTicket.docs');
+const getTicketById = require('./Ticket/getTicketById.docs');
 const bookingTicket = require("./Ticket/bookingTicket.docs");
 const checkinTicket = require("./Ticket/checkinTicket.docs");
 
@@ -85,6 +89,9 @@ module.exports = {
     "/api/v1/route": {
       ...getAllRoute
     },
+    "/api/v1/route/{routeId}": {
+      ...getRouteById
+    },
     "/api/v1/route/create": {
       ...createRoute
     },
@@ -98,6 +105,9 @@ module.exports = {
     //Trip API
     "/api/v1/trip": {
       ...getAllTrip
+    },
+    "/api/v1/trip/search/{tripId}": {
+      ...getTripById
     },
     "/api/v1/trip/{key}": {
       ...getTodayTrip
@@ -113,6 +123,12 @@ module.exports = {
     },
 
     //Ticket API
+    "/api/v1/ticket": {
+      ...getAllTicket
+    },
+    "/api/v1/ticket/{ticketId}": {
+      ...getTicketById
+    },
     "/api/v1/ticket/booking": {
       ...bookingTicket
     },

@@ -15,6 +15,7 @@ module.exports = {
     return queryInterface.bulkInsert("Route", [
       {
         id: "1749db96-728d-4f8a-b803-48e2e93b0980",
+        route_name: "Tuyến 4",
         departure: "Vinhomes Grand Park",
         destination: "FPT University",
         status: 1,
@@ -23,6 +24,7 @@ module.exports = {
       },
       {
         id: "19fd6e79-9dcb-4e63-9b88-74c964170332",
+        route_name: "Tuyến 1",
         departure: "FPT University",
         destination: "HCMC University of Education Student Dormitory",
         status: 1,
@@ -31,6 +33,7 @@ module.exports = {
       },
       {
         id: "93eca08e-32f3-44e1-a875-5f3b39e4f3f0",
+        route_name: "Tuyến 3",
         departure: "FPT University",
         destination: "Vinhomes Grand Park",
         status: 1,
@@ -39,6 +42,7 @@ module.exports = {
       },
       {
         id: "96e01504-4bf3-4429-9b8a-1df25c603177",
+        route_name: "Tuyến 2",
         departure: "HCMC University of Education Student Dormitory",
         destination: "FPT University",
         status: 1,

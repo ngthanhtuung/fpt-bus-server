@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const {
-  ticketReservation
+  ticketReservation,
+  getAllTicket,
+  getTicketById
 } = require("../controllers/ticket-reservation.controller");
 const { checkInTicket } = require("../controllers/checkin.controller");
 const {
@@ -10,6 +12,8 @@ const {
 
 const ticketRouter = Router();
 
+ticketRouter.get("/", [authenticate, authorize(["STUDENT"])], getAllTicket);
+ticketRouter.get("/:ticketId", [authenticate, authorize(["STUDENT"])], getTicketById)
 ticketRouter.post(
   "/booking",
   [authenticate, authorize(["STUDENT"])],

@@ -5,7 +5,23 @@ const { v4: uuid } = require("uuid");
 const { Bus, Route, Trip, Users, sequelize } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
+const { pushNotiByTopic } = require('./notification.controller')
 client.connect();
+
+const getStationBelongToTrip = async (id) => {
+  try {
+    const stations = await sequelize.query(`
+    SELECT S.station_name, S.longitude, S.latitude
+    FROM Trip T INNER JOIN Route R ON T.route_id = R.id
+          INNER JOIN Route_Stations RS ON R.id = RS.route_id
+                INNER JOIN Station S ON RS.station_id = S.id
+    WHERE T.id = '${id}';
+    `)
+    return stations;
+  } catch (err) {
+    return null;
+  }
+}
 
 const createObjectTrip = async (
   route_id,
@@ -31,8 +47,16 @@ const createObjectTrip = async (
       "updatedAt"
     ],
     where: {
-      route_id,
-      bus_id
+      [Op.or]: [
+        { route_id },
+        { bus_id }
+      ],
+      departure_date: {
+        [Op.in]: departure_dates
+      },
+      departure_time: {
+        [Op.in]: departure_times
+      }
     }
   });
 
@@ -46,6 +70,7 @@ const createObjectTrip = async (
   for (const date of departure_dates) {
     for (const time of departure_times) {
       const key = date + "-" + time + ":00";
+      console.log(`\nKey: `, key)
       const existingTrip = existingTripMap.get(key);
       if (existingTrip) {
         duplicates.push({ date, time });
@@ -313,6 +338,45 @@ const getAllTrip = async (req, res) => {
   }
 };
 
+const getAllTripById = async (req, res) => {
+  try {
+    const { tripId } = req.params;
+    if (!tripId) {
+      return res.status(400).json({
+        status: "Fail",
+        message: "Trip ID is required!"
+      })
+    }
+    const trip = await sequelize.query(`
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
+              INNER JOIN Route R ON T.route_id = R.id
+              INNER JOIN Bus B ON T.bus_id = B.id
+              INNER JOIN Users U ON B.driver_id = U.id
+    WHERE T.id = '${tripId}';
+    `)
+    if (trip[0].length > 0) {
+      const stations = await getStationBelongToTrip(tripId);
+      trip[0].push(stations[0]);
+      res.status(200).json({
+        status: "Success",
+        message: "Get a trip successfully",
+        data: trip[0]
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Trip not found"
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message
+    })
+  }
+}
+
 const createTrip = async (req, res) => {
   try {
     const {
@@ -351,22 +415,18 @@ const createTrip = async (req, res) => {
         if (duplicates) {
           res.status(200).json({
             status: "Success",
-            message: `Create ${trip.length} ${
-              trip.length > 1 ? `trips` : `trip`
-            } successfully, ${duplicates.length} ${
-              duplicates.length > 1 ? `trips` : `trip`
-            } already exists`,
+            message: `Create ${trip.length} ${trip.length > 1 ? `trips` : `trip`
+              } successfully, ${duplicates.length} ${duplicates.length > 1 ? `trips` : `trip`
+              } already exists`,
             duplicates: duplicates,
             data: trip
           });
         } else {
           res.status(200).json({
             status: "Success",
-            message: `Create ${trip.length} ${
-              trip.length > 1 ? `trips` : `trip`
-            } successfully, ${duplicates.length} ${
-              duplicates.length > 1 ? `trips` : `trip`
-            } already exists`,
+            message: `Create ${trip.length} ${trip.length > 1 ? `trips` : `trip`
+              } successfully, ${duplicates.length} ${duplicates.length > 1 ? `trips` : `trip`
+              } already exists`,
             data: trip
           });
         }
@@ -557,6 +617,7 @@ const changeStatus = async (req, res) => {
           trip.status = status;
           trip.updatedDate = currentDate();
           await trip.save();
+          await pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
         } else {
           return res.status(403).json({
             status: "Fail",
@@ -590,5 +651,6 @@ module.exports = {
   createTrip,
   updateTrip,
   changeStatus,
-  getTripToday
+  getTripToday,
+  getAllTripById
 };

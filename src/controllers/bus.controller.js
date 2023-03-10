@@ -47,8 +47,16 @@ const checkBusIsOperating = async (busId) => {
 
 const getAllBus = async (req, res) => {
   try {
-    const page = req.params.page || 1;
-    const limit = req.query.limit || 10;
+    const limit =
+      !isNaN(Math.abs(parseInt(req.query.limit))) &&
+        Math.abs(parseInt(req.query.limit)) > 0
+        ? Math.abs(parseInt(req.query.limit))
+        : 10;
+    const page =
+      !isNaN(Math.abs(parseInt(req.query.page))) &&
+        Math.abs(parseInt(req.query.limit)) > 0
+        ? Math.abs(parseInt(req.query.page))
+        : 1;
     const search_query = req.query.search_query || "";
     const offset = (page - 1) * limit;
     const numPage = Math.ceil((await Bus.count()) / limit);
