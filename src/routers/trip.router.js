@@ -4,7 +4,8 @@ const {
   getAllTrip,
   changeStatus,
   updateTrip,
-  getTripToday
+  getTripToday,
+  getAllTripById
 } = require("../controllers/trip.controller");
 const {
   authenticate,
@@ -18,6 +19,7 @@ const tripRouter = Router();
 
 tripRouter.get("/:key", [authenticate, checkDataCache], getTripToday);
 tripRouter.get("/", [authenticate], getAllTrip);
+tripRouter.get("/search/:tripId", [authenticate], getAllTripById)
 tripRouter.post("/create", [authenticate, authorize(["ADMIN"])], createTrip);
 tripRouter.put("/update/:id", [authenticate, authorize(["ADMIN"])], updateTrip);
 tripRouter.put(

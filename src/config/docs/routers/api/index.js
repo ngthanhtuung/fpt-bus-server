@@ -18,6 +18,7 @@ const createRoute = require("./Route/createRoute.docs");
 const changeStatusRoute = require("./Route/changeStatusRoute.docs");
 const updateRoute = require("./Route/updateRoute.docs");
 const getAllTrip = require("./Trip/getAllTrip.docs");
+const getTripById = require("./Trip/getTripById.docs");
 const getTodayTrip = require("./Trip/getTodayTrip.docs");
 const createTrip = require("./Trip/createTrip.docs");
 const updateTrip = require("./Trip/updateTrip.docs");
@@ -99,6 +100,9 @@ module.exports = {
     //Trip API
     "/api/v1/trip": {
       ...getAllTrip
+    },
+    "/api/v1/trip/search/{tripId}": {
+      ...getTripById
     },
     "/api/v1/trip/{key}": {
       ...getTodayTrip
