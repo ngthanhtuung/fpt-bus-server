@@ -79,6 +79,61 @@ const getAllTicket = async (req, res) => {
     }
 }
 
+const getTicketById = async (req, res) => {
+    try {
+        const { ticketId } = req.params;
+        if (ticketId === undefined) {
+            return res.status(400).json({
+                status: "Fail",
+                message: "Ticket ID is required"
+            });
+        } else {
+            const ticket = await Ticket.findOne({
+                where: { id: ticketId },
+                include: [
+                    {
+                        model: Trip,
+                        attributes: ["departure_date", "departure_time", "ticket_quantity"],
+                        include: [
+                            {
+                                model: Bus,
+                                attributes: ["license_plate", "seat_quantity"],
+                                include: [
+                                    {
+                                        model: Users,
+                                        attributes: ["fullname"]
+                                    }
+                                ]
+                            },
+                            {
+                                model: Route,
+                                attributes: ["route_name", "departure", "destination"]
+                            }
+                        ]
+                    }
+                ]
+            })
+            if (ticket) {
+                return res.status(200).json({
+                    status: "Success",
+                    message: "Get ticket successfully",
+                    data: ticket
+                })
+            } else {
+                return res.status(404).json({
+                    status: "Fail",
+                    message: "Ticket not found"
+                })
+            }
+        }
+    } catch (err) {
+        res.status(500).json({
+            status: "Fail",
+            message: err.message
+        })
+    }
+}
+
 const ticketReservation = async (req, res) => {
     try {
         //Pass param user id and trip id in request body
@@ -179,5 +234,6 @@ const ticketReservation = async (req, res) => {
 
 module.exports = {
     ticketReservation,
-    getAllTicket
+    getAllTicket,
+    getTicketById
 };
