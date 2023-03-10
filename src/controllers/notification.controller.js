@@ -14,13 +14,15 @@ const pushNotiByTopic = async (topic, title, content) => {
       },
       topic: topic,
     };
-    FCM.send(message, (err, response) => {
-      if (err) {
-        return false;
-      } else {
-        return true;
-      }
-    });
+    FCM.getMessaging().send(message)
+    // FCM.send(message, (err, response) => {
+    //   if (err) {
+    //     return false;
+    //   } else {
+    //     console.log("Noti mess: ", response)
+    //     return true;
+    //   }
+    // });
   } catch (err) {
     return false;
   }
