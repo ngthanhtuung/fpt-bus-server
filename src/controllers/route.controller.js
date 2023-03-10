@@ -91,6 +91,53 @@ const getAllRoutes = async (req, res) => {
   }
 };
 
+const getRouteById = async (req, res) => {
+  try {
+    const { routeId } = req.params;
+    if (!routeId) {
+      return res.status(400).json({
+        status: "Fail",
+        message: "Route ID is required!"
+      })
+    }
+    const route = await Route.findOne({
+      where: {
+        id: routeId
+      }
+    });
+    if (route) {
+      const stations = await getStationsBelongToRoute(route.id);
+      const departure_coordinates = await getCoordinates(route.departure);
+      const destination_coordinates = await getCoordinates(route.destination);
+      const routeWithStations = {
+        id: route.id,
+        route_name: route.route_name,
+        departure: route.departure,
+        departure_coordinates: departure_coordinates,
+        destination: route.destination,
+        destination_coordinates: destination_coordinates,
+        status: route.status,
+        stations: stations[0],
+      };
+      res.status(200).json({
+        status: "Success",
+        message: "Get route successfully",
+        data: routeWithStations,
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Route not found",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    })
+  }
+};
+
 const createRoute = async (req, res) => {
   try {
     const { route_name, start, end, stations } = req.body;
@@ -240,4 +287,6 @@ module.exports = {
   createRoute,
   updateRoute,
   changeStatus,
+  getCoordinates,
+  getRouteById
 };
