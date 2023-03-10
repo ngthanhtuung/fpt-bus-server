@@ -61,6 +61,7 @@ const getAllRoutes = async (req, res) => {
     if (search_query) {
       whereClause = {
         [Op.or]: [
+          { route_name: { [Op.like]: `%${search_query}%` } },
           { departure: { [Op.like]: `%${search_query}%` } },
           { destination: { [Op.like]: `%${search_query}%` } },
         ],
