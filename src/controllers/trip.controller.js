@@ -617,7 +617,7 @@ const changeStatus = async (req, res) => {
           trip.status = status;
           trip.updatedDate = currentDate();
           await trip.save();
-          await pushNotiByTopic(`TRIP_${trip.dataValues.deparute_date}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
+          await pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
         } else {
           return res.status(403).json({
             status: "Fail",
