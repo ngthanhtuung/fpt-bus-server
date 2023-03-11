@@ -9,7 +9,6 @@ const authenticate = (req, res, next) => {
     req.user = decode;
     req.user_id = decode.id;
     req.role_name = decode.role_name;
-    req.role_id = decode.role_id;
     req.status = decode.status;
     next();
   } catch (error) {

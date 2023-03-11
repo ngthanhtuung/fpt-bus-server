@@ -72,12 +72,12 @@ const findAllUser = async (req, res) => {
     console.log("Type of status: ", typeof status);
     const limit =
       !isNaN(Math.abs(parseInt(req.query.limit))) &&
-      Math.abs(parseInt(req.query.limit)) > 0
+        Math.abs(parseInt(req.query.limit)) > 0
         ? Math.abs(parseInt(req.query.limit))
         : 10;
     const page =
       !isNaN(Math.abs(parseInt(req.query.page))) &&
-      Math.abs(parseInt(req.query.limit)) > 0
+        Math.abs(parseInt(req.query.limit)) > 0
         ? Math.abs(parseInt(req.query.page))
         : 1;
     const offset = (page - 1) * limit;
@@ -200,7 +200,7 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const id = req.params.id;
+    const { userId } = req.params;
     const {
       fullname,
       email,
@@ -211,27 +211,30 @@ const updateUser = async (req, res) => {
       status,
     } = req.body;
     const errors_validation = validate(fullname, email, phone_number);
-    // const error_check_existed = await checkExisted(email, phone_number);
-    const errors = {};
+    const error_check_existed = await checkExisted(email, phone_number);
+    const errors = { ...errors_validation };
     if (Object.keys(errors).length > 0) {
       res.status(400).json({
         status: "Fail",
         messages: errors,
       });
     } else {
-      const checkExistedUser = await Users.findByPk(id);
+      const checkExistedUser = await Users.findOne({ where: { id: userId } });
       if (!checkExistedUser) {
         res.status(404).json({
           status: "Fail",
           messages: "User not found!",
         });
       } else {
+        //If user is login in is ADMIN
         if (req.role_name === "ADMIN") {
-          console.log("Login role: ", req.role_name);
-          console.log("Login id: ", req.user_id);
-          console.log("Login user status: ", req.status);
-          if ((checkExistedUser.id = req.user_id)) {
-            if (status != req.status || role_id != req.role_id) {
+          const role_name = await RoleTypes.findOne({ where: { id: role_id } });
+          //If update user is login in user
+          console.log("Check existed user id: ", checkExistedUser.id);
+          console.log("User login in id: ", req.user_id);
+          if (checkExistedUser.id === req.user_id) {
+            //Don't allow update role and status of login in user
+            if (status != req.status || role_name.role_name != req.role_name) {
               res.status(400).json({
                 status: "Fail",
                 messages: "You can't change your role or status!",
@@ -242,20 +245,31 @@ const updateUser = async (req, res) => {
                   fullname,
                   phone_number,
                   profile_img,
+                  updatedAt: currentDate()
                 },
                 {
                   where: {
-                    id,
+                    id: userId,
                   },
                 }
               );
+              const user = await Users.findOne({
+                where: { id: userId },
+                include: [
+                  {
+                    model: RoleTypes,
+                    attributes: ["role_name"],
+                  }
+                ]
+              })
               res.status(200).json({
                 status: "Success",
-                message: `${updatedUser.fullname} updated successfully!`,
-                data: updatedUser,
+                message: `${user.fullname} updated successfully!`,
+                data: user,
               });
             }
           } else {
+            //ADMIN can update another user with DRIVER and STUDENT role.
             const updatedUser = await Users.update(
               {
                 fullname,
@@ -265,17 +279,27 @@ const updateUser = async (req, res) => {
                 profile_img,
                 role_id,
                 status,
+                updatedAt: currentDate()
               },
               {
                 where: {
-                  id,
+                  id: userId,
                 },
               }
             );
+            const user = await Users.findOne({
+              where: { id: userId },
+              include: [
+                {
+                  model: RoleTypes,
+                  attributes: ["role_name"],
+                }
+              ]
+            })
             res.status(200).json({
               status: "Success",
-              message: `${updatedUser.fullname} updated successfully!`,
-              data: updatedUser,
+              message: `${user.fullname} updated successfully!`,
+              data: user,
             });
           }
         } else {
@@ -284,17 +308,27 @@ const updateUser = async (req, res) => {
               fullname,
               phone_number,
               profile_img,
+              updatedAt: currentDate()
             },
             {
               where: {
-                id,
+                id: userId,
               },
             }
           );
+          const user = await Users.findOne({
+            where: { id: userId },
+            include: [
+              {
+                model: RoleTypes,
+                attributes: ["role_name"],
+              }
+            ]
+          })
           res.status(200).json({
             status: "Success",
-            message: `${updatedUser.fullname} updated successfully!`,
-            data: updatedUser,
+            message: `${user.fullname} updated successfully!`,
+            data: user,
           });
         }
       }
@@ -368,6 +402,7 @@ const changeStatus = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   findAllUser,
   createUser,

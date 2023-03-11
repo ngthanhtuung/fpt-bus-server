@@ -17,6 +17,15 @@ module.exports = {
     ],
     requestBody: {
       required: true,
+      description: `
+      1 - ACTIVE
+      2 - CHECK-IN
+      3 - DEACTIVATED
+      4 - STARTED
+      5 - FINISHED
+      6 - CANCELED
+      7 - EXPIRED
+      `,
       content: {
         "application/json": {
           schema: {
