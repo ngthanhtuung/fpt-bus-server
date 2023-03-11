@@ -6,7 +6,7 @@ module.exports = {
         bearerAuth: [],
       },
     ],
-    description: "Update an existing station",
+    description: "Update an existing user",
     parameters: [
       {
         name: "userId",
