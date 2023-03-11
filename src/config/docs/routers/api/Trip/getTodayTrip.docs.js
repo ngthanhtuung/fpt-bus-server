@@ -11,7 +11,11 @@ module.exports = {
       {
         name: "key",
         in: "path",
-        description: "Key for cache",
+        description: `
+        Key for cache:
+        - STUDENT: student-today
+        - DRIVER: driver-{driver_id}
+        `,
         required: true
       }
     ],

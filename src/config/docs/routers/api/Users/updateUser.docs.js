@@ -9,31 +9,45 @@ module.exports = {
     description: "Update an existing station",
     parameters: [
       {
-        name: "id",
+        name: "userId",
         in: "path",
-        description: "Station id",
+        description: "User ID",
         required: true,
       },
     ],
     requestBody: {
       required: true,
+      description: `
+      ADMIN profile only need to send: fullname, phone_number, profile_img
+      ADMIN update for STUDENT and DRIVER profile need to send: fullname, email, phone_number, student_id, profile_img, role_id, status
+      STUDENT and DRIVER profile only need to send: fullname, phone_number, profile_img
+      `,
       content: {
         "application/json": {
           schema: {
             type: "object",
             properties: {
-              station_name: {
+              fullname: {
                 type: "string",
               },
-              longitude: {
+              email: {
                 type: "string",
               },
-              latitude: {
+              phone: {
                 type: "string",
+              },
+              student_id: {
+                type: "string",
+              },
+              profile_img: {
+                type: "string",
+              },
+              role_id: {
+                type: "number",
               },
               status: {
                 type: "boolean",
-              },
+              }
             },
           },
         },
@@ -41,7 +55,7 @@ module.exports = {
     },
     responses: {
       200: {
-        description: "Update station successfully!",
+        description: "Updated user successfully",
         content: {
           "application/json": {
             schema: {
@@ -53,38 +67,60 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Update station successfully!",
+                  example: "Updated user successfully",
                 },
                 data: {
                   type: "object",
                   properties: {
                     id: {
                       type: "string",
-                      example: "0e9fa2f3-756b-4d73-94f7-b9a73cd5d71b",
+                      example: "2127094d-6615-4300-8a21-6d16eb66bf7c",
                     },
-                    station_name: {
+                    fullname: {
                       type: "string",
-                      example: "University of Transportation",
+                      example: "Nguyen Van A",
                     },
-                    longitude: {
+                    email: {
                       type: "string",
-                      example: "106.7919828",
+                      example: "anvse159272@fpt.edu.vn",
                     },
-                    latitude: {
+                    phone_number: {
                       type: "string",
-                      example: "10.8457017",
+                      example: "0123456789",
+                    },
+                    student_id: {
+                      type: "string",
+                      example: "SE159272",
+                    },
+                    profile_img: {
+                      type: "string",
+                      example:
+                        "https://lh3.googleusercontent.com/a/AEdFTp41vyAK7DlyiJYHOAVYUWa9uVd5pwQ7y8SlO80U=s96-c",
                     },
                     status: {
                       type: "boolean",
-                      example: false,
+                      example: true,
+                    },
+                    role_id: {
+                      type: "integer",
+                      example: 1,
                     },
                     createdAt: {
                       type: "string",
-                      example: "2021-02-22T05:23:14.000Z",
+                      example: "2023-02-17T07:02:56.000Z",
                     },
-                    updadtedAt: {
+                    updatedAt: {
                       type: "string",
-                      example: "2021-02-22T05:44:35.000Z",
+                      example: "2023-02-17T07:02:57.000Z",
+                    },
+                    RoleType: {
+                      type: "object",
+                      properties: {
+                        role_name: {
+                          type: "string",
+                          example: "STUDENT",
+                        },
+                      },
                     },
                   },
                 },
@@ -146,7 +182,7 @@ module.exports = {
                 },
                 message: {
                   type: "string",
-                  example: "Station is not existed!",
+                  example: "User is not existed!",
                 },
               },
             },
