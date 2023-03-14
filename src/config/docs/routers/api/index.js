@@ -1,4 +1,6 @@
 const signin = require("./Auth/signin.docs");
+const signinPhone = require('./Auth/signinPhone.docs');
+const verifyOTP = require('./Auth/verifyOTP.docs');
 const getUsers = require("./Users/getUsers.docs");
 const createUser = require("./Users/createUser.docs");
 const updateUser = require("./Users/updateUser.docs");
@@ -35,7 +37,12 @@ module.exports = {
     "/api/v1/auth/sign-in": {
       ...signin
     },
-
+    "/api/v1/auth/phone/sign-in": {
+      ...signinPhone
+    },
+    "/api/v1/auth/verify-otp": {
+      ...verifyOTP
+    },
     //User API
     "/api/v1/users": {
       ...getUsers

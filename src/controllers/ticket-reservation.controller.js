@@ -1,8 +1,9 @@
 const { v4: uuid } = require("uuid");
-const { Ticket, Trip, Bus, Users, Route } = require("../models");
+const { Ticket, Trip, Bus, Users, Route, sequelize } = require("../models");
 const currentDate = require("../utils/currentDate");
 const { generateQRCode } = require("../utils/qrCode")
 const { uploadQRCode } = require('./upload.controller');
+const { findClosestTime } = require('../utils/time.utils')
 
 const getAllTicket = async (req, res) => {
     try {
@@ -232,8 +233,77 @@ const ticketReservation = async (req, res) => {
     }
 };
 
+const getTicketComing = async (req, res) => {
+    try {
+        const userLoginId = req.user_id;
+        console.log("User login ID: ", userLoginId);
+        const today = new Date().toISOString().slice(0, 10);
+        console.log('Today: ', today)
+        const getTimes = await sequelize.query(`
+        SELECT Tr.departure_time
+        FROM Ticket T INNER JOIN Trip Tr ON T.trip_id = Tr.id AND Tr.departure_date = '${today}'
+        WHERE T.user_id = '${userLoginId}';
+        `)
+        console.log("Get time: ", getTimes[0])
+        if (getTimes[0].length > 0) {
+            let arrayTime = [];
+            getTimes[0].map(time => {
+                arrayTime.push(time.departure_time.slice(0, 5));
+            })        
+            const closetTime = findClosestTime(arrayTime);
+            console.log('Closet Time: ', closetTime);
+            const ticket = await Ticket.findOne({
+                include: [
+                    {
+                        model: Trip,
+                        attributes: ["departure_date", "departure_time", "ticket_quantity"],
+                        where: {
+                            departure_time: closetTime.time
+                        },
+                        include: [
+                            {
+                                model: Bus,
+                                attributes: ["license_plate", "seat_quantity"],
+                                include: [
+                                    {
+                                        model: Users,
+                                        attributes: ["fullname"]
+                                    }
+                                ]
+                            },
+                            {
+                                model: Route,
+                                attributes: ["route_name", "departure", "destination"]
+                            }
+                        ]
+                    }
+                ]
+            });
+            res.status(200).json({
+                status: "Success",
+                message: "Get trip successfully",
+                data: {
+                    ticket,
+                    timeLeft: closetTime.diff
+                }
+            })
+        } else {
+            res.status(404).json({
+                status: "Fail",
+                message: "No trip today!"
+            })
+        }
+    } catch (err) {
+        res.status(500).json({
+            status: "Fail",
+            message: err.message
+        })
+    }
+}
+
 module.exports = {
     ticketReservation,
     getAllTicket,
-    getTicketById
+    getTicketById,
+    getTicketComing
 };
