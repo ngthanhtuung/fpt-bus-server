@@ -131,6 +131,7 @@ const signInPhoneNumber = async (req, res) => {
     const userLogin = await Users.findOne({
       where: {
         phone_number: phone,
+        role_id: 3,
         status: true,
       },
       include: [
@@ -187,6 +188,7 @@ const verifyCodeNumber = async (req, res) => {
       const userLogin = await Users.findOne({
         where: {
           phone_number: phone,
+          status: 3,
           status: true,
         },
         include: [

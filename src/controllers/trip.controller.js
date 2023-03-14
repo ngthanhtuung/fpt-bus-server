@@ -2,7 +2,7 @@ require("dotenv").config();
 const redis = require("redis");
 const client = redis.createClient(process.env.PORT_REDIS);
 const { v4: uuid } = require("uuid");
-const { Bus, Route, Trip, Users, sequelize } = require("../models");
+const { Bus, Route, Trip, Users, sequelize, Ticket } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 const { pushNotiByTopic } = require('./notification.controller')
@@ -29,6 +29,20 @@ const expiredTrip = async () => {
 cron.schedule('0 0 * * *', () => {
   expiredTrip();
 });
+
+
+const getComingTrip = async (req, res) => {
+  try {
+    const userLoginId = req.user_id;
+    const today = new Date().toISOString.slice(0, 10);
+
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message
+    });
+  }
+}
 
 
 const getStationBelongToTrip = async (id) => {
@@ -140,6 +154,7 @@ const checkExistedTrip = async (trip) => {
 const getAllTripForDriver = async (req, res) => {
   try {
     const date = req.query.date || new Date().toISOString().slice(0, 10);
+    const search_query = req.query.search_query || "";
     const userLoginId = req.user_id;
     const trips = await sequelize.query(`
     SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
@@ -147,7 +162,8 @@ const getAllTripForDriver = async (req, res) => {
               INNER JOIN Route R ON T.route_id = R.id
               INNER JOIN Bus B ON T.bus_id = B.id
               INNER JOIN Users U ON B.driver_id = U.id
-    WHERE T.departure_date = '${date}' AND U.id = '${userLoginId}'
+    WHERE T.departure_date = '${date}' AND U.id = '${userLoginId}' 
+    ${search_query !== "" ? ` AND (R.route_name LIKE ${search_query} OR R.departure LIKE ${search_query} OR R.destination LIKE ${search_query} OR B.license_plate LIKE ${search_query})` : ""}
     ORDER BY T.departure_time ASC;
     `);
     if (trips[0].length > 0) {
@@ -173,7 +189,8 @@ const getAllTripForDriver = async (req, res) => {
 const getTripForStudent = async (req, res) => {
   try {
     const route_id = req.query.route_id;
-    const date = req.query.date || new Date().toISOString.slice(0, 10);
+    const date = req.query.date || new Date().toISOString().slice(0, 10);
+    const search_query = req.query.search_query || ""
     if (
       !route_id ||
       route_id === "" ||
@@ -192,6 +209,7 @@ const getTripForStudent = async (req, res) => {
                 INNER JOIN Bus B ON T.bus_id = B.id
                 INNER JOIN Users U ON B.driver_id = U.id
       WHERE T.departure_date = '${date}' AND route_id = '${route_id}' AND T.status = 1
+      ${search_query !== "" ? ` OR (R.route_name LIKE '${search_query}' OR R.departure LIKE '${search_query}' OR R.destination LIKE '${search_query}' OR B.license_plate LIKE '${search_query}')` : ""}
       ORDER BY T.departure_time ASC;
       `);
       if (trips[0].length > 0) {

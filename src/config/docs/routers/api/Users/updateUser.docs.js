@@ -33,7 +33,7 @@ module.exports = {
               email: {
                 type: "string",
               },
-              phone: {
+              phone_number: {
                 type: "string",
               },
               student_id: {
