@@ -249,48 +249,55 @@ const getTicketComing = async (req, res) => {
             let arrayTime = [];
             getTimes[0].map(time => {
                 arrayTime.push(time.departure_time.slice(0, 5));
-            })        
+            })
             const closetTime = findClosestTime(arrayTime);
             console.log('Closet Time: ', closetTime);
-            const ticket = await Ticket.findOne({
-                include: [
-                    {
-                        model: Trip,
-                        attributes: ["departure_date", "departure_time", "ticket_quantity"],
-                        where: {
-                            departure_time: closetTime.time
-                        },
-                        include: [
-                            {
-                                model: Bus,
-                                attributes: ["license_plate", "seat_quantity"],
-                                include: [
-                                    {
-                                        model: Users,
-                                        attributes: ["fullname"]
-                                    }
-                                ]
+            if (closetTime !== null) {
+                const ticket = await Ticket.findOne({
+                    include: [
+                        {
+                            model: Trip,
+                            attributes: ["departure_date", "departure_time", "ticket_quantity"],
+                            where: {
+                                departure_time: closetTime.time
                             },
-                            {
-                                model: Route,
-                                attributes: ["route_name", "departure", "destination"]
-                            }
-                        ]
+                            include: [
+                                {
+                                    model: Bus,
+                                    attributes: ["license_plate", "seat_quantity"],
+                                    include: [
+                                        {
+                                            model: Users,
+                                            attributes: ["fullname"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    model: Route,
+                                    attributes: ["route_name", "departure", "destination"]
+                                }
+                            ]
+                        }
+                    ]
+                });
+                res.status(200).json({
+                    status: "Success",
+                    message: "Get a ticket successfully",
+                    data: {
+                        ticket,
+                        timeLeft: closetTime.diff
                     }
-                ]
-            });
-            res.status(200).json({
-                status: "Success",
-                message: "Get trip successfully",
-                data: {
-                    ticket,
-                    timeLeft: closetTime.diff
-                }
-            })
+                })
+            } else {
+                res.status(404).json({
+                    status: "Fail",
+                    message: "No trip found"
+                })
+            }
         } else {
             res.status(404).json({
                 status: "Fail",
-                message: "No trip today!"
+                message: "No trip found"
             })
         }
     } catch (err) {
