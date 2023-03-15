@@ -10,18 +10,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Wallet.hasMany(models.Transaction, { foreignKey: "wallet_id" });
-      Wallet.belongsTo(models.WalletTypes, { foreignKey: "wallet_type_id" });
       Wallet.belongsTo(models.Users, { foreignKey: "user_id" });
     }
   }
   Wallet.init(
     {
       balance: DataTypes.DOUBLE,
-      wallet_type: DataTypes.INTEGER,
     },
     {
       sequelize,
       modelName: "Wallet",
+      tableName: "Wallet"
     }
   );
   return Wallet;

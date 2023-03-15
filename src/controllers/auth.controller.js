@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
 const { getStudentId, checkEmailDomain } = require("../utils/email.utils");
-const { Users, RoleTypes } = require("../models");
+const { Users, RoleTypes, Wallet } = require("../models");
 const { v4: uuidv4 } = require("uuid");
+const currentDate = require("../utils/currentDate");
 require("dotenv").config();
-const client = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN)
+const client = require('twilio')(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
 const createAccessToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
@@ -89,25 +90,35 @@ const signUp = async (req, res) => {
         where: { role_name: "STUDENT" },
       }).then((role) => {
         user.setRoleType(role);
-        const payload = {
-          id: user.id,
-          fullname: user.fullname,
-          email: user.email,
-          phone_number: user.phone_number,
-          student_id: user.student_id,
-          profile_img: user.profile_img,
-          status: user.status,
-          role_name: role.role_name,
-        };
-        const accessToken = createAccessToken(payload);
-        res.status(200).json({
-          status: "Success",
-          messages: "Login successfully!",
-          data: {
-            user: payload,
-            accessToken,
-          },
-        });
+        Wallet.create({
+          id: uuidv4(),
+          user_id: user.id,
+          balance: 0,
+          createdAt: currentDate(),
+          updatedAt: currentDate(),
+        }).then((wallet) => {
+          const payload = {
+            id: user.id,
+            fullname: user.fullname,
+            email: user.email,
+            phone_number: user.phone_number,
+            student_id: user.student_id,
+            profile_img: user.profile_img,
+            status: user.status,
+            role_name: role.role_name,
+            wallet_id: wallet.id,
+          };
+          const accessToken = createAccessToken(payload);
+          res.status(200).json({
+            status: "Success",
+            messages: "Login successfully!",
+            data: {
+              user: payload,
+              accessToken,
+            },
+          });
+        })
+
       });
     });
   } catch (error) {
