@@ -12,25 +12,31 @@ const findClosestTime = (times) => {
     });
 
     // If there is no time after the current time, wrap around to the first time in the array
-    const closestTime = index === -1 ? sortedTimes[0] : sortedTimes[index];
+    const closestTime = index === -1 ? null : sortedTimes[index];
 
-    // Calculate the number of minutes from the current time to the closest time
-    const closestTimeMinutes = parseInt(closestTime.slice(0, 2)) * 60 + parseInt(closestTime.slice(3, 5));
-    const diffMinutes = closestTimeMinutes - currentMinutes;
-    const diffHours = Math.floor(diffMinutes / 60);
-    const diffRemainder = diffMinutes % 60;
+    if (closestTime != null) {
+        // Calculate the number of minutes from the current time to the closest time
+        const closestTimeMinutes = parseInt(closestTime.slice(0, 2)) * 60 + parseInt(closestTime.slice(3, 5));
+        const diffMinutes = closestTimeMinutes - currentMinutes;
+        const diffHours = Math.floor(diffMinutes / 60);
+        const diffRemainder = diffMinutes % 60;
 
-    let diff = "";
+        let diff = "";
 
-    if (diffHours > 0) {
-        diff = `${diffHours} ${diffHours > 1 ? `hours` : `hour`} and ${diffRemainder} minutes`;
+        if (diffHours > 0) {
+            diff = `${diffHours} ${diffHours > 1 ? `hours` : `hour`} and ${diffRemainder} minutes`;
+        } else {
+            diff = `${diffRemainder} minutes`;
+        }
+        return {
+            time: closestTime,
+            diff: diff
+        };
+
     } else {
-        diff = `${diffRemainder} minutes`;
+        return null;
     }
-    return {
-        time: closestTime,
-        diff: diff
-    };
+
 }
 
 module.exports = {

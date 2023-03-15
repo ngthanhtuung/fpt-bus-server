@@ -28,6 +28,7 @@ const updateTrip = require("./Trip/updateTrip.docs");
 const changeTripStatus = require("./Trip/changeTripStatus.docs");
 const getAllTicket = require('./Ticket/getAllTicket.docs');
 const getTicketById = require('./Ticket/getTicketById.docs');
+const tripComing = require('./Ticket/tripComing.docs');
 const bookingTicket = require("./Ticket/bookingTicket.docs");
 const checkinTicket = require("./Ticket/checkinTicket.docs");
 
@@ -135,6 +136,9 @@ module.exports = {
     //Ticket API
     "/api/v1/ticket": {
       ...getAllTicket
+    },
+    "/api/v1/ticket/coming": {
+      ...tripComing
     },
     "/api/v1/ticket/{ticketId}": {
       ...getTicketById
