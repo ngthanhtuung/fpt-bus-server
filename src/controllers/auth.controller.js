@@ -97,7 +97,6 @@ const signUp = async (req, res) => {
           createdAt: currentDate(),
           updatedAt: currentDate(),
         }).then((wallet) => {
-          console.log("Wallet created successfully!");
           const payload = {
             id: user.id,
             fullname: user.fullname,
