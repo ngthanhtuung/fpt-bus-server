@@ -237,7 +237,7 @@ const getTripForAdmin = async (req, res) => {
   try {
     const date = req.query.date;
     const trips = await sequelize.query(`
-    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    SELECT T.*, TS.status_name, R.route_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
     FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
               INNER JOIN Route R ON T.route_id = R.id
               INNER JOIN Bus B ON T.bus_id = B.id
