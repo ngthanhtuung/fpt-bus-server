@@ -14,14 +14,6 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
-      wallet_type_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "WalletTypes",
-          key: "id",
-        },
-      },
       user_id: {
         type: Sequelize.UUID,
         allowNull: false,
