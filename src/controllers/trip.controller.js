@@ -574,7 +574,7 @@ const updateTrip = async (req, res) => {
               },
               {
                 model: Route,
-                attributes: ["departure", "destination"]
+                attributes: ["route_name", "departure", "destination"]
               }
             ]
           });
@@ -637,7 +637,7 @@ const changeStatus = async (req, res) => {
         },
         {
           model: Route,
-          attributes: ["departure", "destination"]
+          attributes: ["route_name", "departure", "destination"]
         }
       ]
     });
