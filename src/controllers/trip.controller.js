@@ -270,7 +270,6 @@ const getTripTodayForDriver = async (req, res) => {
   try {
     const { key } = req.params;
     const userLoginId = key.slice(7, key.length);
-    console.log('Cache user id login: ', userLoginId);
     const date = new Date().toISOString().slice(0, 10);
     const trips = await sequelize.query(`
     SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
