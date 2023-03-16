@@ -1,5 +1,8 @@
-const { Ticket, Trip } = require("../models");
+const { Ticket, Trip, Wallet, Transaction } = require("../models");
 const currentDate = require("../utils/currentDate");
+const { v4: uuidv4 } = require('uuid');
+
+
 const checkInTicket = async (req, res) => {
     try {
         const { idTicket } = req.params;
@@ -10,7 +13,6 @@ const checkInTicket = async (req, res) => {
             });
         }
         const ticket = await Ticket.findByPk(idTicket);
-        console.log("Ticket:", ticket);
         if (ticket == undefined) {
             return res.status(404).json({
                 status: "Fail",
@@ -36,6 +38,24 @@ const checkInTicket = async (req, res) => {
                     {
                         where: { id: idTicket },
                     });
+                const wallet = await Wallet.findOne({
+                    where: {
+                        user_id: ticket.user_id
+                    }
+                })
+                wallet.balance = wallet.balance + 10;
+                await wallet.save();
+                const transaction = await Transaction.create({
+                    id: uuidv4(),
+                    ticket_id: idTicket,
+                    wallet_id: wallet.id,
+                    amount: 10,
+                    type: 'REFUND',
+                    status: 'SUCCESS',
+                    description: `Refund to wallet ${wallet.id} with amount 10`,
+                    createdAt: currentDate(),
+                    updatedAt: currentDate()
+                })
                 return res.status(200).json({
                     status: "Success",
                     message: "Check in successfully",

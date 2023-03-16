@@ -1,5 +1,5 @@
-const { v4: uuid } = require("uuid");
-const { Ticket, Trip, Bus, Users, Route, sequelize } = require("../models");
+const { v4: uuidv4 } = require('uuid');
+const { Ticket, Trip, Bus, Users, Route, Wallet, Transaction, sequelize } = require("../models");
 const currentDate = require("../utils/currentDate");
 const { generateQRCode } = require("../utils/qrCode")
 const { uploadQRCode } = require('./upload.controller');
@@ -161,57 +161,88 @@ const ticketReservation = async (req, res) => {
             }
         });
         if (checkTicketReservation.length === 0) {
+            const wallet = await Wallet.findOne({
+                where: {
+                    user_id: userLoginId
+                }
+            })
+            let balance = wallet.balance;
             //trip status = 1 (active) accept booking else response trip invalid
             if (trip.status === 1 && trip.ticket_quantity > 0) {
-                const ticketId = uuid();
-                const ticket = await Ticket.create({
-                    id: ticketId,
-                    trip_id: tripId,
-                    user_id: userLoginId,
-                    qrUrl: "",
-                    status: true,
-                    createdAt: currentDate(),
-                    updatedAt: currentDate()
-                });
-                const data = `${process.env.NODE_ENV === `development` ? `http://${process.env.HOST}:${process.env.PORT}/api/v1/ticket/check-in/${ticketId}` : `${process.env.DOMAIN}/api/v1/ticket/check-in/${ticketId}`}`;
-                const base64Ticket = await generateQRCode(data);
-                console.log(`\n\nData: `, data);
-                const imgUrl = await uploadQRCode(base64Ticket, ticketId);
-                ticket.qrUrl = imgUrl;
-                await ticket.save();
-                if (ticket) {
-                    await Trip.update(
-                        {
-                            ticket_quantity: trip.ticket_quantity - 1
-                        },
-                        { where: { id: tripId } }
-                    );
-                    return res.status(201).json({
-                        status: "Success",
-                        message: "Booking ticket successfully",
-                        data: {
-                            ticket_id: ticket.id,
-                            trip_id: ticket.trip_id,
-                            user_id: ticket.user_id,
-                            qrUrl: ticket.qrUrl,
-                            status: ticket.status,
-                            createdAt: ticket.createdAt,
-                            updatedAt: ticket.updatedAt
-                        }
+                if (balance >= 10) {
+                    const ticketId = uuidv4();
+                    const ticket = await Ticket.create({
+                        id: ticketId,
+                        trip_id: tripId,
+                        user_id: userLoginId,
+                        qrUrl: "",
+                        status: true,
+                        createdAt: currentDate(),
+                        updatedAt: currentDate()
                     });
+                    const data = `${process.env.NODE_ENV === `development` ? `http://${process.env.HOST}:${process.env.PORT}/api/v1/ticket/check-in/${ticketId}` : `${process.env.DOMAIN}/api/v1/ticket/check-in/${ticketId}`}`;
+                    const base64Ticket = await generateQRCode(data);
+                    const imgUrl = await uploadQRCode(base64Ticket, ticketId);
+                    ticket.qrUrl = imgUrl;
+                    await ticket.save();
+                    if (ticket) {
+                        await Trip.update(
+                            {
+                                ticket_quantity: trip.ticket_quantity - 1
+                            },
+                            { where: { id: tripId } }
+                        );
+                        const newBalance = balance - 10;
+                        wallet.balance = newBalance;
+                        await wallet.save();
+                        const transaction = await Transaction.create({
+                            id: uuidv4(),
+                            ticket_id: ticketId,
+                            wallet_id: wallet.id,
+                            amount: 10,
+                            type: 'PAYMENT',
+                            status: 'SUCCESS',
+                            description: `Payment for trip ${tripId} successfully`,
+                            createdAt: currentDate(),
+                            updatedAt: currentDate()
+                        })
+                        return res.status(201).json({
+                            status: "Success",
+                            message: "Booking ticket successfully",
+                            data: [
+                                {
+                                    ticket_id: ticket.id,
+                                    trip_id: ticket.trip_id,
+                                    user_id: ticket.user_id,
+                                    qrUrl: ticket.qrUrl,
+                                    status: ticket.status,
+                                    createdAt: ticket.createdAt,
+                                    updatedAt: ticket.updatedAt
+                                },
+                                {
+                                    transaction
+                                }
+                            ]
+                        });
+                    } else {
+                        await Trip.update(
+                            {
+                                status: 3
+                            },
+                            {
+                                where: { id: tripId }
+                            }
+                        );
+                        return res.status(400).json({
+                            status: "Fail",
+                            message: "Booking ticket fail"
+                        });
+                    }
                 } else {
-                    await Trip.update(
-                        {
-                            status: 3
-                        },
-                        {
-                            where: { id: tripId }
-                        }
-                    );
-                    return res.status(400).json({
+                    res.status(200).json({
                         status: "Fail",
-                        message: "Booking ticket fail"
-                    });
+                        message: "Your wallet balance is not enough to book this trip"
+                    })
                 }
             } else {
                 return res.status(400).json({
@@ -244,7 +275,6 @@ const getTicketComing = async (req, res) => {
         FROM Ticket T INNER JOIN Trip Tr ON T.trip_id = Tr.id AND Tr.departure_date = '${today}'
         WHERE T.user_id = '${userLoginId}';
         `)
-        console.log("Get time: ", getTimes[0])
         if (getTimes[0].length > 0) {
             let arrayTime = [];
             getTimes[0].map(time => {

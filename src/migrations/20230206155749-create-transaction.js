@@ -11,21 +11,14 @@ module.exports = {
       },
       ticket_id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "Ticket",
           key: "id",
         },
       },
-      content: {
+      description: {
         type: Sequelize.TEXT,
-      },
-      transaction_type_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "TransactionType",
-          key: "id",
-        },
       },
       wallet_id: {
         type: Sequelize.UUID,
@@ -34,6 +27,19 @@ module.exports = {
           model: "Wallet",
           key: "id",
         },
+      },
+      amount: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      type: {
+        type: Sequelize.ENUM('TOPUP', 'REFUND', 'PAYMENT'),
+        allowNull: false,
+      },
+      status: {
+        type: Sequelize.ENUM('SUCCESS', 'FAILED', 'PENDING'),
+        defaultValue: 'success',
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

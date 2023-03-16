@@ -9,6 +9,7 @@ const routeRouter = require("./route.router");
 const tripRouter = require("./trip.router");
 const ticketRouter = require("./ticket.router");
 const checkInRouter = require("./checkin.router");
+const payRouter = require("./payment.router");
 
 const rootRouter = Router();
 
@@ -22,5 +23,6 @@ rootRouter.use("/route", routeRouter);
 rootRouter.use("/trip", tripRouter);
 rootRouter.use("/user", userRouter);
 rootRouter.use("/ticket", ticketRouter);
+rootRouter.use("/payment", payRouter);
 
 module.exports = rootRouter;

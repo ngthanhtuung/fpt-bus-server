@@ -11,21 +11,21 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Transaction.belongsTo(models.Wallet, { foreignKey: "wallet_id" });
       Transaction.belongsTo(models.Ticket, { foreignKey: "ticket_id" });
-      Transaction.belongsTo(models.TransactionType, {
-        foreignKey: "transaction_type_id",
-      });
     }
   }
   Transaction.init(
     {
       ticket_id: DataTypes.STRING,
-      content: DataTypes.TEXT,
-      transaction_type_id: DataTypes.INTEGER,
+      description: DataTypes.TEXT,
       wallet_id: DataTypes.STRING,
+      amount: DataTypes.DOUBLE,
+      type: DataTypes.ENUM("TOPUP", "REFUND", "PAYMENT"),
+      status: DataTypes.ENUM("SUCESS", "FAILED", "PENDING"),
     },
     {
       sequelize,
       modelName: "Transaction",
+      tableName: "Transaction"
     }
   );
   return Transaction;
