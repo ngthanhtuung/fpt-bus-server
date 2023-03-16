@@ -269,7 +269,7 @@ const getTripForAdmin = async (req, res) => {
 const getTripTodayForDriver = async (req, res) => {
   try {
     const { key } = req.params;
-    const userLoginId = key.slice(11, key.length);
+    const userLoginId = key.slice(7, key.length);
     const date = new Date().toISOString().slice(0, 10);
     const trips = await sequelize.query(`
     SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
@@ -282,7 +282,7 @@ const getTripTodayForDriver = async (req, res) => {
     `);
     if (trips[0].length > 0) {
       await client.set(key, JSON.stringify(trips[0]), {
-        EX: 3600,
+        EX: 600,
         NX: true
       });
       res.status(200).json({
@@ -319,7 +319,7 @@ const getTripTodayForStudent = async (req, res) => {
     `);
     if (trips[0].length > 0) {
       await client.set(key, JSON.stringify(trips[0]), {
-        EX: 3600,
+        EX: 600,
         NX: true
       });
       res.status(200).json({
