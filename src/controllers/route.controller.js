@@ -19,10 +19,17 @@ const getStationsBelongToRoute = async (routeId) => {
   }
 };
 
-const isRouteDuplicated = async (startName, endName) => {
+const isRouteDuplicated = async (routeName, startName, endName) => {
   try {
     const where = {
-      [Op.and]: [{ departure: startName }, { destination: endName }],
+      [Op.or]: [
+        {
+          [Op.and]: [{ departure: startName }, { destination: endName }]
+        },
+        {
+          route_name: routeName,
+        }
+      ]
     };
     const route = await Route.findOne({
       where,
@@ -155,7 +162,7 @@ const createRoute = async (req, res) => {
     const { route_name, start, end, stations } = req.body;
     const startName = (await Station.findByPk(start)).station_name;
     const endName = (await Station.findByPk(end)).station_name;
-    const isDuplicated = await isRouteDuplicated(startName, endName);
+    const isDuplicated = await isRouteDuplicated(route_name, startName, endName);
     if (isDuplicated) {
       res.status(400).json({
         status: "Fail",
