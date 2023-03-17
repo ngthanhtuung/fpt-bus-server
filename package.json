@@ -30,6 +30,7 @@
     "rotating-file-stream": "^3.0.4",
     "sequelize": "^6.28.0",
     "sqlite3": "^5.1.4",
+    "stripe": "^11.14.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.0",
     "twilio": "^4.8.0",

@@ -1,6 +1,7 @@
 const findClosestTime = (times) => {
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const currentSeconds = currentMinutes * 60 + now.getSeconds();
 
     // Sort the times in ascending order
     const sortedTimes = times.sort();
@@ -15,22 +16,17 @@ const findClosestTime = (times) => {
     const closestTime = index === -1 ? null : sortedTimes[index];
 
     if (closestTime != null) {
-        // Calculate the number of minutes from the current time to the closest time
+        // Calculate the number of seconds from the current time to the closest time
         const closestTimeMinutes = parseInt(closestTime.slice(0, 2)) * 60 + parseInt(closestTime.slice(3, 5));
-        const diffMinutes = closestTimeMinutes - currentMinutes;
-        const diffHours = Math.floor(diffMinutes / 60);
-        const diffRemainder = diffMinutes % 60;
-
-        let diff = "";
-
-        if (diffHours > 0) {
-            diff = `${diffHours} ${diffHours > 1 ? `hours` : `hour`} and ${diffRemainder} minutes`;
-        } else {
-            diff = `${diffRemainder} minutes`;
-        }
+        const closestTimeSeconds = closestTimeMinutes * 60;
+        const diffSeconds = closestTimeSeconds - currentSeconds;
+        // const diffHours = Math.floor(diffSeconds / 3600);
+        // const diffMinutes = Math.floor((diffSeconds % 3600) / 60);
+        // const diffRemainder = diffSeconds % 60;
+        let diff = parseInt(diffSeconds);
         return {
             time: closestTime,
-            diff: diff
+            diff
         };
 
     } else {

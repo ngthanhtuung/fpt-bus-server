@@ -8,6 +8,7 @@ const authenticate = (req, res, next) => {
     const decode = jwt.verify(bearerToken, process.env.JWT_SECRET);
     req.user = decode;
     req.user_id = decode.id;
+    req.email = decode.email;
     req.role_name = decode.role_name;
     req.status = decode.status;
     next();
