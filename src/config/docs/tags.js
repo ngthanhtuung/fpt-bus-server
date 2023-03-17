@@ -32,5 +32,9 @@ module.exports = {
       name: "Station",
       description: "Station related routes",
     },
+    {
+      name: "Payment",
+      description: "Payment related routes",
+    }
   ],
 };
