@@ -31,6 +31,8 @@ const getTicketById = require('./Ticket/getTicketById.docs');
 const tripComing = require('./Ticket/tripComing.docs');
 const bookingTicket = require("./Ticket/bookingTicket.docs");
 const checkinTicket = require("./Ticket/checkinTicket.docs");
+const payTopUp = require("./Payment/payTopUp.docs");
+const getAllTransaction = require("./Payment/getAllTransaction.docs");
 
 module.exports = {
   paths: {
@@ -148,6 +150,14 @@ module.exports = {
     },
     "/api/v1/ticket/check-in/{idTicket}": {
       ...checkinTicket
+    },
+
+    //Payment API
+    "/api/v1/payment/top-up": {
+      ...payTopUp
+    },
+    "/api/v1/payment/transaction": {
+      ...getAllTransaction
     }
   }
 };

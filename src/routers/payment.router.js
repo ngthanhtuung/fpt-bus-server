@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { topUpWallet } = require('../controllers/payment.controller');
+const { topUpWallet, getTransaction } = require('../controllers/payment.controller');
 const {
     authenticate,
     authorize,
@@ -7,6 +7,7 @@ const {
 
 const payRouter = Router();
 
+payRouter.get("/transaction", [authenticate, authorize(['STUDENT'])], getTransaction);
 payRouter.post("/top-up", [authenticate, authorize(['STUDENT'])], topUpWallet);
 
 module.exports = payRouter;
