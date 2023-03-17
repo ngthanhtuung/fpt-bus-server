@@ -157,13 +157,15 @@ const getAllTripForDriver = async (req, res) => {
     const search_query = req.query.search_query || "";
     const userLoginId = req.user_id;
     const trips = await sequelize.query(`
-    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name', COUNT(Ti.id) as 'ticket_counter' 
     FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
               INNER JOIN Route R ON T.route_id = R.id
               INNER JOIN Bus B ON T.bus_id = B.id
               INNER JOIN Users U ON B.driver_id = U.id
+              LEFT JOIN Ticket Ti ON Ti.trip_id = T.id
     WHERE T.departure_date = '${date}' AND U.id = '${userLoginId}' 
     ${search_query !== "" ? ` AND (R.route_name LIKE ${search_query} OR R.departure LIKE ${search_query} OR R.destination LIKE ${search_query} OR B.license_plate LIKE ${search_query})` : ""}
+    GROUP BY T.id
     ORDER BY T.departure_time ASC;
     `);
     if (trips[0].length > 0) {
@@ -272,17 +274,19 @@ const getTripTodayForDriver = async (req, res) => {
     const userLoginId = key.slice(7, key.length);
     const date = new Date().toISOString().slice(0, 10);
     const trips = await sequelize.query(`
-    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name'
+    SELECT T.*, TS.status_name, R.departure, R.destination, B.license_plate, U.fullname as 'driver_name', COUNT(Ti.id) as 'ticket_counter' 
     FROM Trip_Status TS INNER JOIN Trip T ON TS.id = T.status 
               INNER JOIN Route R ON T.route_id = R.id
               INNER JOIN Bus B ON T.bus_id = B.id
               INNER JOIN Users U ON B.driver_id = U.id
+              LEFT JOIN Ticket Ti ON Ti.trip_id = T.id
     WHERE T.departure_date = '${date}' AND U.id = '${userLoginId}'
+    GROUP BY T.id
     ORDER BY T.departure_time ASC;
     `);
     if (trips[0].length > 0) {
       await client.set(key, JSON.stringify(trips[0]), {
-        EX: 600,
+        EX: 300,
         NX: true
       });
       res.status(200).json({

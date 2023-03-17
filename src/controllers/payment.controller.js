@@ -22,7 +22,6 @@ const topUpWallet = async (req, res) => {
                     user_id: req.user_id
                 }
             })
-            const currentBalance = wallet.balance;
             wallet.balance = wallet.balance + amount;
             await wallet.save();
             const transaction = await Transaction.create({
