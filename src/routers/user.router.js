@@ -4,7 +4,8 @@ const {
   findAllUser,
   createUser,
   changeStatus,
-  updateUser
+  updateUser,
+  getWallet
 } = require("../controllers/user.controller");
 const {
   authenticate,
@@ -14,6 +15,7 @@ const {
 const userRouter = Router();
 
 userRouter.get("/", [authenticate, authorize(["ADMIN"])], findAllUser);
+userRouter.get("/wallet", [authenticate, authorize(["STUDENT"])], getWallet);
 userRouter.post("/create", [authenticate, authorize(["ADMIN"])], createUser);
 userRouter.put("/update/:userId", [authenticate], updateUser)
 userRouter.put("/change-status/:id", [

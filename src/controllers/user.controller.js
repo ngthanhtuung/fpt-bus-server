@@ -1,4 +1,4 @@
-const { Users, RoleTypes } = require("../models");
+const { Users, RoleTypes, Wallet } = require("../models");
 const Sequelize = require("sequelize");
 const validator = require("validator");
 const { checkEmailDomain } = require("../utils/email.utils");
@@ -403,9 +403,43 @@ const changeStatus = async (req, res) => {
   }
 };
 
+const getWallet = async (req, res) => {
+  try {
+    const wallet = await Wallet.findOne({
+      where: {
+        user_id: req.user_id,
+      },
+      include: [
+        {
+          model: Users,
+          attributes: ["id", "fullname", "email", "student_id"]
+        }
+      ]
+    })
+    if (wallet) {
+      res.status(200).json({
+        status: "Success",
+        message: "Get wallet successfully!",
+        data: wallet
+      })
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Wallet not found!",
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      messages: err.message,
+    })
+  }
+}
+
 module.exports = {
   findAllUser,
   createUser,
   updateUser,
   changeStatus,
+  getWallet
 };
