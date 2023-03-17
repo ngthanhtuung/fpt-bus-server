@@ -2,6 +2,7 @@ const signin = require("./Auth/signin.docs");
 const signinPhone = require('./Auth/signinPhone.docs');
 const verifyOTP = require('./Auth/verifyOTP.docs');
 const getUsers = require("./Users/getUsers.docs");
+const getWallet = require("./Users/getWallet.docs");
 const createUser = require("./Users/createUser.docs");
 const updateUser = require("./Users/updateUser.docs");
 const changeStatusUser = require("./Users/changeStatusUser.docs");
@@ -46,17 +47,21 @@ module.exports = {
     "/api/v1/auth/verify-otp": {
       ...verifyOTP
     },
+
     //User API
-    "/api/v1/users": {
+    "/api/v1/user": {
       ...getUsers
     },
-    "/api/v1/users/create": {
+    "/api/v1/user/wallet": {
+      ...getWallet
+    },
+    "/api/v1/user/create": {
       ...createUser
     },
     "/api/v1/user/update/{userId}": {
       ...updateUser
     },
-    "/api/v1/users/change-status/{id}": {
+    "/api/v1/user/change-status/{id}": {
       ...changeStatusUser
     },
 
