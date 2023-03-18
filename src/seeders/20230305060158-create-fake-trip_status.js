@@ -28,6 +28,21 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        status_name: "STARTED",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        status_name: "FINISHED",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        status_name: "CANCELED",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
 
