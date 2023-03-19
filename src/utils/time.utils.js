@@ -24,11 +24,14 @@ const findClosestTime = (times) => {
         // const diffMinutes = Math.floor((diffSeconds % 3600) / 60);
         // const diffRemainder = diffSeconds % 60;
         let diff = parseInt(diffSeconds);
-        return {
-            time: closestTime,
-            diff
-        };
-
+        if (diff > 0) {
+            return {
+                time: closestTime,
+                diff
+            };
+        } else {
+            return null;
+        }
     } else {
         return null;
     }
