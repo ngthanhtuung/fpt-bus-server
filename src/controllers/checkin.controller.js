@@ -2,7 +2,6 @@ const { Ticket, Trip, Wallet, Transaction } = require("../models");
 const currentDate = require("../utils/currentDate");
 const { v4: uuidv4 } = require('uuid');
 
-
 const checkInTicket = async (req, res) => {
     try {
         const { idTicket } = req.params;
@@ -28,7 +27,7 @@ const checkInTicket = async (req, res) => {
             });
         }
         if (trip.status === 2) {
-            if (ticket.status === true) {
+            if (ticket.status === true && ticket.checkInAt == null) {
                 await Ticket.update(
                     {
                         status: false,
@@ -59,6 +58,11 @@ const checkInTicket = async (req, res) => {
                 return res.status(200).json({
                     status: "Success",
                     message: "Check in successfully",
+                });
+            } else if (ticket.status === false && ticket.checkInAt == null) {
+                return res.status(400).json({
+                    status: "Fail",
+                    message: "Ticket is not valid",
                 });
             } else {
                 return res.status(400).json({

@@ -7,7 +7,7 @@ const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 const { pushNotiByTopic } = require('./notification.controller')
 const moment = require("moment-timezone");
-const cron = require("node-cron");
+
 
 client.connect();
 
@@ -24,24 +24,6 @@ const expiredTrip = async () => {
       trip.update({ status: 4 });
     }
   });
-}
-
-cron.schedule('0 0 * * *', () => {
-  expiredTrip();
-});
-
-
-const getComingTrip = async (req, res) => {
-  try {
-    const userLoginId = req.user_id;
-    const today = new Date().toISOString.slice(0, 10);
-
-  } catch (err) {
-    res.status(500).json({
-      status: "Fail",
-      message: err.message
-    });
-  }
 }
 
 
@@ -369,6 +351,7 @@ const getTripToday = async (req, res) => {
 
 //START MAIN METHOD
 const getAllTrip = async (req, res) => {
+
   const role = req.role_name;
   switch (role) {
     case "ADMIN":
@@ -526,7 +509,6 @@ const updateTrip = async (req, res) => {
         ticket_quantity
       };
       const check = await checkExistedTrip(checkTrip);
-      console.log("Check Existed trip ", check);
       if (check) {
         res.status(400).json({
           status: "Fail",
@@ -697,5 +679,6 @@ module.exports = {
   updateTrip,
   changeStatus,
   getTripToday,
-  getAllTripById
+  getAllTripById,
+  expiredTrip
 };
