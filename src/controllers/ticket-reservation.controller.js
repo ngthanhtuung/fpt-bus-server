@@ -3,7 +3,7 @@ const { Ticket, Trip, Bus, Users, Route, Wallet, Transaction, sequelize } = requ
 const currentDate = require("../utils/currentDate");
 const { generateQRCode } = require("../utils/qrCode")
 const { uploadQRCode } = require('./upload.controller');
-const { findClosestTime } = require('../utils/time.utils')
+const { findClosestTime, isMoreThanMinutes } = require('../utils/time.utils')
 
 const getAllTicket = async (req, res) => {
     try {
@@ -338,9 +338,76 @@ const getTicketComing = async (req, res) => {
     }
 }
 
+const cancelTicket = async (req, res) => {
+    try {
+        const { ticketId } = req.params;
+        const userLoginId = req.user_id;
+        const ticket = await Ticket.findOne({
+            where: {
+                id: ticketId,
+            }
+        })
+        if (ticket == undefined) {
+            return res.status(404).json({
+                status: "Fail",
+                message: "Ticket not found"
+            })
+        } else {
+            const trip = await Trip.findOne({
+                where: {
+                    id: ticket.trip_id
+                }
+            })
+            if (trip.status === 1 || (isMoreThanMinutes(trip.departure_time, 15) === false)) {
+                ticket.status = false;
+                ticket.updatedAt = currentDate();
+                trip.ticket_quantity = trip.ticket_quantity + 1;
+                trip.updatedAt = currentDate();
+                await ticket.save();
+                await trip.save();
+                const wallet = await Wallet.findOne({
+                    where: {
+                        user_id: userLoginId
+                    }
+                })
+                wallet.balance = wallet.balance + 10;
+                wallet.updatedAt = currentDate();
+                await wallet.save();
+                await Transaction.create({
+                    id: uuidv4(),
+                    ticket_id: ticketId,
+                    wallet_id: wallet.id,
+                    amount: 10,
+                    type: 'REFUND',
+                    status: 'SUCCESS',
+                    description: `Refund for trip ${trip.id} successfully`,
+                    createdAt: currentDate(),
+                    updatedAt: currentDate()
+                })
+                return res.status(200).json({
+                    status: "Success",
+                    message: "Cancel ticket successfully",
+                    data: ticket
+                })
+            } else {
+                return res.status(400).json({
+                    status: "Fail",
+                    message: "You can not cancel this ticket"
+                })
+            }
+        }
+    } catch (err) {
+        res.status(500).json({
+            status: "Fail",
+            message: err.message
+        })
+    }
+}
+
 module.exports = {
     ticketReservation,
     getAllTicket,
     getTicketById,
-    getTicketComing
+    getTicketComing,
+    cancelTicket
 };

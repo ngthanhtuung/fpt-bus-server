@@ -1,3 +1,5 @@
+const moment = require("moment-timezone");
+
 const findClosestTime = (times) => {
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -38,6 +40,15 @@ const findClosestTime = (times) => {
 
 }
 
+const isMoreThanMinutes = (timeString, timeCheck) => {
+    const now = moment.tz("Asia/Ho_Chi_Minh");
+    const timeParts = timeString.split(':');
+    const time = moment.tz([now.year(), now.month(), now.date(), timeParts[0], timeParts[1], timeParts[2]], "Asia/Ho_Chi_Minh");
+    const diffInMinutes = Math.round((now - time) / 60000); // Divide by 60000 to convert milliseconds to minutes
+    return diffInMinutes <= timeCheck;
+};
+
 module.exports = {
-    findClosestTime
+    findClosestTime,
+    isMoreThanMinutes
 }

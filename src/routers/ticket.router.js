@@ -3,7 +3,8 @@ const {
   ticketReservation,
   getAllTicket,
   getTicketById,
-  getTicketComing
+  getTicketComing,
+  cancelTicket
 } = require("../controllers/ticket-reservation.controller");
 const { checkInTicket } = require("../controllers/checkin.controller");
 const {
@@ -21,6 +22,12 @@ ticketRouter.post(
   [authenticate, authorize(["STUDENT"])],
   ticketReservation
 );
+ticketRouter.post(
+  "/cancel/:ticketId",
+  [authenticate, authorize(["STUDENT"])],
+  cancelTicket
+);
+
 
 
 ticketRouter.put("/check-in/:idTicket", [authenticate, authorize(["DRIVER"])], checkInTicket)

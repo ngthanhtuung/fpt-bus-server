@@ -4,6 +4,9 @@ const writeLog = require("./src/middlewares/writeLog");
 const docs = require("./src/config/docs");
 const swaggerUi = require("swagger-ui-express");
 const rootRouter = require("./src/routers/root.router");
+const cron = require("node-cron");
+const { expiredTrip } = require("./src/controllers/trip.controller");
+
 const app = express();
 
 const corsOpts = {
@@ -23,6 +26,10 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(docs, { explorer: true })
 );
+
+cron.schedule('0 0 * * *', () => {
+  expiredTrip();
+});
 
 app.use("/api/v1", rootRouter);
 
