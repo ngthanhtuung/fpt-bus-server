@@ -267,9 +267,7 @@ const ticketReservation = async (req, res) => {
 const getTicketComing = async (req, res) => {
     try {
         const userLoginId = req.user_id;
-        console.log("User login ID: ", userLoginId);
         const today = new Date().toISOString().slice(0, 10);
-        console.log('Today: ', today)
         const getTimes = await sequelize.query(`
         SELECT Tr.departure_time
         FROM Ticket T INNER JOIN Trip Tr ON T.trip_id = Tr.id AND Tr.departure_date = '${today}'

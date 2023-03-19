@@ -25,7 +25,7 @@ const findClosestTime = (times) => {
         // const diffHours = Math.floor(diffSeconds / 3600);
         // const diffMinutes = Math.floor((diffSeconds % 3600) / 60);
         // const diffRemainder = diffSeconds % 60;
-        let diff = parseInt(diffSeconds);
+        let diff = parseInt(diffSeconds) + 15; //plus 15 seconds for delay time
         if (diff > 0) {
             return {
                 time: closestTime,
