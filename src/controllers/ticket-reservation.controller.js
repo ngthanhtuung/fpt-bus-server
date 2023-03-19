@@ -358,12 +358,7 @@ const cancelTicket = async (req, res) => {
                     id: ticket.trip_id
                 }
             })
-            if (trip.status === 2 || (isMoreThanMinutes(trip.departure_time, 15) === false)) {
-                return res.status(400).json({
-                    status: "Fail",
-                    message: "You can not cancel this ticket"
-                })
-            } else {
+            if (trip.status === 1 || (isMoreThanMinutes(trip.departure_time, 15) === false)) {
                 ticket.status = false;
                 ticket.updatedAt = currentDate();
                 trip.ticket_quantity = trip.ticket_quantity + 1;
@@ -389,11 +384,15 @@ const cancelTicket = async (req, res) => {
                     createdAt: currentDate(),
                     updatedAt: currentDate()
                 })
-
-                res.status(200).json({
+                return res.status(200).json({
                     status: "Success",
                     message: "Cancel ticket successfully",
                     data: ticket
+                })
+            } else {
+                return res.status(400).json({
+                    status: "Fail",
+                    message: "You can not cancel this ticket"
                 })
             }
         }
