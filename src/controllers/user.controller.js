@@ -1,4 +1,4 @@
-const { Users, RoleTypes, Wallet } = require("../models");
+const { Users, RoleTypes, Wallet, Bus } = require("../models");
 const Sequelize = require("sequelize");
 const validator = require("validator");
 const { checkEmailDomain } = require("../utils/email.utils");
@@ -358,44 +358,137 @@ const changeStatus = async (req, res) => {
         messages: "You're loggin into the system. Operation denied!",
       });
     } else {
-
-      const updatedUser = await Users.update(
-        {
-          status: !checkExistedUser.status,
-          updatedAt: currentDate(),
-        },
-        {
+      if (checkExistedUser.dataValues.role_id === 3) {
+        const checkDriver = await Bus.findOne({
           where: {
-            id,
-          },
-        }
-      ).then(() => {
-        Users.findOne({
-          where: {
-            id,
-          },
-          include: [
-            {
-              model: RoleTypes,
-              attributes: ["role_name"],
-            },
-          ],
-        }).then((user) => {
-          if (user.status === true) {
-            res.status(200).json({
-              status: "Success",
-              message: "User is enabled!",
-              data: user,
+            driver_id: id,
+          }
+        })
+        if (checkDriver) {
+          const bus = await checkBusIsOperating(checkDriver.dataValues.id);
+          if (bus > 0) {
+            return res.status(400).json({
+              status: "Fail",
+              messages: "Driver is operating bus. Operation denied!",
             });
           } else {
-            res.status(200).json({
-              status: "Success",
-              message: "User is disabled!",
-              data: user,
+            const updatedUser = await Users.update(
+              {
+                status: !checkExistedUser.status,
+                updatedAt: currentDate(),
+              },
+              {
+                where: {
+                  id,
+                },
+              }
+            ).then(() => {
+              Users.findOne({
+                where: {
+                  id,
+                },
+                include: [
+                  {
+                    model: RoleTypes,
+                    attributes: ["role_name"],
+                  },
+                ],
+              }).then((user) => {
+                if (user.status === true) {
+                  return res.status(200).json({
+                    status: "Success",
+                    message: "User is enabled!",
+                    data: user,
+                  });
+                } else {
+                  return res.status(200).json({
+                    status: "Success",
+                    message: "User is disabled!",
+                    data: user,
+                  });
+                }
+              });
             });
           }
+        } else {
+          const updatedUser = await Users.update(
+            {
+              status: !checkExistedUser.status,
+              updatedAt: currentDate(),
+            },
+            {
+              where: {
+                id,
+              },
+            }
+          ).then(() => {
+            Users.findOne({
+              where: {
+                id,
+              },
+              include: [
+                {
+                  model: RoleTypes,
+                  attributes: ["role_name"],
+                },
+              ],
+            }).then((user) => {
+              if (user.status === true) {
+                return res.status(200).json({
+                  status: "Success",
+                  message: "User is enabled!",
+                  data: user,
+                });
+              } else {
+                return res.status(200).json({
+                  status: "Success",
+                  message: "User is disabled!",
+                  data: user,
+                });
+              }
+            });
+          });
+        }
+      } else {
+        const updatedUser = await Users.update(
+          {
+            status: !checkExistedUser.status,
+            updatedAt: currentDate(),
+          },
+          {
+            where: {
+              id,
+            },
+          }
+        ).then(() => {
+          Users.findOne({
+            where: {
+              id,
+            },
+            include: [
+              {
+                model: RoleTypes,
+                attributes: ["role_name"],
+              },
+            ],
+          }).then((user) => {
+            if (user.status === true) {
+              return res.status(200).json({
+                status: "Success",
+                message: "User is enabled!",
+                data: user,
+              });
+            } else {
+              return res.status(200).json({
+                status: "Success",
+                message: "User is disabled!",
+                data: user,
+              });
+            }
+          });
         });
-      });
+      }
+
     }
   } catch (err) {
     res.status(500).json({
