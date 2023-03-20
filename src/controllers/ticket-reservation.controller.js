@@ -23,7 +23,7 @@ const getAllTicket = async (req, res) => {
         const { status } = req.query;
 
         const whereClause = {
-            user_id: userLoginId
+            user_id: userLoginId,
         }
         if (
             status != undefined &&
@@ -38,6 +38,7 @@ const getAllTicket = async (req, res) => {
             where: whereClause,
             offset: offset,
             limit: limit,
+            order: [["createdAt", "DESC"]],
             include: [
                 {
                     model: Trip,
@@ -267,9 +268,7 @@ const ticketReservation = async (req, res) => {
 const getTicketComing = async (req, res) => {
     try {
         const userLoginId = req.user_id;
-        console.log("User login ID: ", userLoginId);
         const today = new Date().toISOString().slice(0, 10);
-        console.log('Today: ', today)
         const getTimes = await sequelize.query(`
         SELECT Tr.departure_time
         FROM Ticket T INNER JOIN Trip Tr ON T.trip_id = Tr.id AND Tr.departure_date = '${today}'
@@ -358,7 +357,7 @@ const cancelTicket = async (req, res) => {
                     id: ticket.trip_id
                 }
             })
-            if (trip.status === 1 || (isMoreThanMinutes(trip.departure_time, 15) === false)) {
+            if (trip.status === 1 && (isMoreThanMinutes(trip.departure_time, 15) === true)) {
                 ticket.status = false;
                 ticket.updatedAt = currentDate();
                 trip.ticket_quantity = trip.ticket_quantity + 1;

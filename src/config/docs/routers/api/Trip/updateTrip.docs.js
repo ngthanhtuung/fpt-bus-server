@@ -37,17 +37,11 @@ module.exports = {
               bus_id: {
                 type: "string",
               },
-              departure_dates: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
+              departure_date: {
+                type: "string"
               },
-              departure_times: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
+              departure_time: {
+                type: "string",
               },
               ticket_quantity: {
                 type: "number",
