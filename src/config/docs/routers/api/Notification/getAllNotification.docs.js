@@ -7,6 +7,24 @@ module.exports = {
             },
         ],
         description: "API for getting all notification",
+        parameters: [
+            {
+                name: "limit",
+                in: "query",
+                required: false,
+                description: "Limit number of ticket",
+                type: "number",
+                default: 10
+            },
+            {
+                name: "page",
+                in: "query",
+                required: false,
+                description: "Page number",
+                type: "number",
+                default: 1
+            },
+        ],
         responses: {
             200: {
                 description: "Get notification successfully!",

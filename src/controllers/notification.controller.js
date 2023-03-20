@@ -87,17 +87,31 @@ const createNotiObject = (notification, listUserId) => {
 
 const getAllNotification = async (req, res) => {
   try {
+    const limit =
+      !isNaN(Math.abs(parseInt(req.query.limit))) &&
+        Math.abs(parseInt(req.query.limit)) > 0
+        ? Math.abs(parseInt(req.query.limit))
+        : 10;
+    const page =
+      !isNaN(Math.abs(parseInt(req.query.page))) &&
+        Math.abs(parseInt(req.query.limit)) > 0
+        ? Math.abs(parseInt(req.query.page))
+        : 1;
+    const offset = (page - 1) * limit;
+    const numPage = Math.ceil((await Bus.count()) / limit);
     const userLoginId = req.user_id;
-    const notifications = await Notification.findAll({
+    const { count, rows } = await Notification.findAndCountAll({
       attributes: ['id', 'title', 'body', 'dataTitle', 'dataBody', 'sentTime', 'createdAt', 'updatedAt'],
       where: {
         user_id: userLoginId
       },
+      offset: offset,
+      limit: limit,
       order: [
         ['sentTime', 'DESC']
       ]
     });
-    if (notifications == undefined) {
+    if (rows == undefined) {
       res.status(404).json({
         status: "Fail",
         message: "Notification not found!",
@@ -106,7 +120,13 @@ const getAllNotification = async (req, res) => {
       res.status(200).json({
         status: "Success",
         message: "Get notification successfully!",
-        data: notifications,
+        pagination: {
+          total: count,
+          limit: limit,
+          current_page: page,
+          total_page: numPage
+        },
+        data: rows,
       });
     }
   } catch (err) {
