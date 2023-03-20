@@ -2,11 +2,12 @@ require("dotenv").config();
 const redis = require("redis");
 const client = redis.createClient(process.env.PORT_REDIS);
 const { v4: uuid } = require("uuid");
-const { Bus, Route, Trip, Users, sequelize, Ticket } = require("../models");
+const { Bus, Route, Trip, Users, sequelize, Notification } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
-const { pushNotiByTopic } = require('./notification.controller')
+const { pushNotiByTopic, createNotiObject } = require('./notification.controller')
 const moment = require("moment-timezone");
+const { isMoreThanMinutes } = require("../utils/time.utils");
 
 
 client.connect();
@@ -25,7 +26,6 @@ const expiredTrip = async () => {
     }
   });
 }
-
 
 const getStationBelongToTrip = async (id) => {
   try {
@@ -268,7 +268,7 @@ const getTripTodayForDriver = async (req, res) => {
     `);
     if (trips[0].length > 0) {
       await client.set(key, JSON.stringify(trips[0]), {
-        EX: 300,
+        EX: 60,
         NX: true
       });
       res.status(200).json({
@@ -305,7 +305,7 @@ const getTripTodayForStudent = async (req, res) => {
     `);
     if (trips[0].length > 0) {
       await client.set(key, JSON.stringify(trips[0]), {
-        EX: 600,
+        EX: 60,
         NX: true
       });
       res.status(200).json({
@@ -644,10 +644,29 @@ const changeStatus = async (req, res) => {
         }
       } else {
         if (userRole === "DRIVER") {
-          trip.status = status;
-          trip.updatedDate = currentDate();
-          await trip.save();
-          pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
+          if (isMoreThanMinutes(trip.departure_time, 15)) {
+            return res.status(400).json({
+              status: "Fail",
+              message: "You can't check-in more than 15 minutes before departure time"
+            });
+          } else {
+            trip.status = status;
+            trip.updatedDate = currentDate();
+            await trip.save();
+            const ticket = await sequelize.query(`
+            SELECT user_id FROM Ticket WHERE trip_id = '${trip.dataValues.id}'
+            `);
+            const listUserId = ticket[0].map(item => item.user_id);
+            console.log(`\n\n\nlistUserId`, listUserId);
+            pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
+            const notification = {
+              title: "F-Bus Notification",
+              body: "Trip is checking-in, hurry up!",
+              sentTime: currentDate(),
+            }
+            const nofiticationData = createNotiObject(notification, listUserId);
+            await Notification.bulkCreate(nofiticationData);
+          }
         } else {
           return res.status(403).json({
             status: "Fail",

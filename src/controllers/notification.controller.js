@@ -2,6 +2,9 @@ const admin = require("firebase-admin");
 const fcm = require("fcm-notification");
 require('dotenv').config();
 const serviceAccount = require("../config/firebase-notification");
+const { v4: uuid } = require("uuid");
+const { Notification } = require('../models');
+const currentDate = require("../utils/currentDate");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -64,7 +67,26 @@ const pushNoti = async (req, res) => {
   }
 };
 
+
+const createNotiObject = (notification, listUserId) => {
+  const notiObject = [];
+  listUserId.forEach((userId) => {
+    notiObject.push({
+      id: uuid(),
+      user_id: userId,
+      title: notification.title,
+      body: notification.body,
+      sentTime: currentDate(),
+      createdAt: currentDate(),
+      updatedAt: currentDate(),
+    });
+  });
+  return notiObject;
+}
+
+
 module.exports = {
   pushNoti,
-  pushNotiByTopic
+  pushNotiByTopic,
+  createNotiObject
 };

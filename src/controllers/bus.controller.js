@@ -120,10 +120,17 @@ const createBus = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).json({
-      status: "Fail",
-      message: err.message,
-    });
+    if (err.message === 'Validation error') {
+      return res.status(500).json({
+        status: "Fail",
+        message: "Driver is already assigned to another bus",
+      });
+    } else {
+      return res.status(500).json({
+        status: "Fail",
+        message: err.message,
+      });
+    }
   }
 };
 
@@ -170,10 +177,17 @@ const updateBus = async (req, res) => {
       });
     }
   } catch (err) {
-    res.status(500).json({
-      status: "Fail",
-      message: err.message,
-    });
+    if (err.message === 'Validation error') {
+      return res.status(500).json({
+        status: "Fail",
+        message: "Driver is already assigned to another bus",
+      });
+    } else {
+      return res.status(500).json({
+        status: "Fail",
+        message: err.message,
+      });
+    }
   }
 };
 
