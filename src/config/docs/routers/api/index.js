@@ -35,6 +35,8 @@ const cancelTicket = require("./Ticket/cancelTicket.docs");
 const checkinTicket = require("./Ticket/checkinTicket.docs");
 const payTopUp = require("./Payment/payTopUp.docs");
 const getAllTransaction = require("./Payment/getAllTransaction.docs");
+const getAllNotification = require('./Notification/getAllNotification.docs');
+const createNotification = require('./Notification/createNotification.docs');
 
 module.exports = {
   paths: {
@@ -167,6 +169,14 @@ module.exports = {
     },
     "/api/v1/payment/transaction": {
       ...getAllTransaction
+    },
+
+    //Notification API
+    "/api/v1/notification": {
+      ...getAllNotification
+    },
+    "/api/v1/notification/create": {
+      ...createNotification
     }
   }
 };
