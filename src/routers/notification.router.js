@@ -6,7 +6,7 @@ const notiRouter = new Router();
 
 notiRouter.get("/all", authenticate, getAllNotification);
 notiRouter.post("/", authenticate, pushNoti);
-notiRouter.post("/create", [authenticate, authorize(['DRIVER'])], createNoti);
+notiRouter.post("/create", authenticate, createNoti);
 
 
 module.exports = notiRouter;

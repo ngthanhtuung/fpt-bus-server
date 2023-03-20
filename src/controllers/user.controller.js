@@ -347,7 +347,6 @@ const changeStatus = async (req, res) => {
     const id = req.params.id;
     const userLogin = req.user_id;
     const checkExistedUser = await Users.findByPk(id);
-    console.log("Check existed user: ", checkExistedUser);
     if (!checkExistedUser) {
       res.status(404).json({
         status: "Fail",
