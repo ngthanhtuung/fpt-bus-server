@@ -7,6 +7,7 @@ const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 const { pushNotiByTopic } = require('./notification.controller')
 const moment = require("moment-timezone");
+const { isMoreThanMinutes } = require("../utils/time.utils");
 
 
 client.connect();
@@ -641,10 +642,17 @@ const changeStatus = async (req, res) => {
         }
       } else {
         if (userRole === "DRIVER") {
-          trip.status = status;
-          trip.updatedDate = currentDate();
-          await trip.save();
-          pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
+          if (isMoreThanMinutes(trip.departure_time, 15)) {
+            return res.status(400).json({
+              status: "Fail",
+              message: "You can't check-in more than 15 minutes before departure time"
+            });
+          } else {
+            trip.status = status;
+            trip.updatedDate = currentDate();
+            await trip.save();
+            pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
+          }
         } else {
           return res.status(403).json({
             status: "Fail",
