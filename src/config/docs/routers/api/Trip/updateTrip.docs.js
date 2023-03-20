@@ -38,16 +38,10 @@ module.exports = {
                 type: "string",
               },
               departure_date: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
+                type: "string"
               },
               departure_time: {
-                type: "array",
-                items: {
-                  type: "string",
-                },
+                type: "string",
               },
               ticket_quantity: {
                 type: "number",
