@@ -218,7 +218,7 @@ const updateRoute = async (req, res) => {
     const { route_name, start, end, stations, status } = req.body;
     const updatedStartName = (await Station.findByPk(start)).station_name;
     const updatedEndName = (await Station.findByPk(end)).station_name;
-    const isDuplicated = await isRouteDuplicated(route_name, startName, endName);
+    const isDuplicated = await isRouteDuplicated(route_name, updatedStartName, updatedEndName);
     const route = await Route.findByPk(id);
     if (route) {
       if (isDuplicated) {
