@@ -98,7 +98,7 @@ const getAllNotification = async (req, res) => {
         ? Math.abs(parseInt(req.query.page))
         : 1;
     const offset = (page - 1) * limit;
-    const numPage = Math.ceil((await Bus.count()) / limit);
+    const numPage = Math.ceil((await Notification.count()) / limit);
     const userLoginId = req.user_id;
     const { count, rows } = await Notification.findAndCountAll({
       attributes: ['id', 'title', 'body', 'dataTitle', 'dataBody', 'sentTime', 'createdAt', 'updatedAt'],
