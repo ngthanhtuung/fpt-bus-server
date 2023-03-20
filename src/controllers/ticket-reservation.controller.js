@@ -23,7 +23,7 @@ const getAllTicket = async (req, res) => {
         const { status } = req.query;
 
         const whereClause = {
-            user_id: userLoginId
+            user_id: userLoginId,
         }
         if (
             status != undefined &&
@@ -38,6 +38,7 @@ const getAllTicket = async (req, res) => {
             where: whereClause,
             offset: offset,
             limit: limit,
+            order: [["createdAt", "DESC"]],
             include: [
                 {
                     model: Trip,
