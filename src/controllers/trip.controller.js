@@ -484,7 +484,7 @@ const updateTrip = async (req, res) => {
       ticket_quantity,
       status
     } = req.body;
-    console.log("body:",req.body);
+    console.log("body:", req.body);
     const trip = await Trip.findOne({
       attributes: [
         "id",
@@ -501,7 +501,7 @@ const updateTrip = async (req, res) => {
         id
       }
     });
-    console.log("trip:",trip);
+    console.log("trip:", trip);
     if (trip) {
       const checkTrip = {
         bus_id,
@@ -533,7 +533,7 @@ const updateTrip = async (req, res) => {
             }
           }
         );
-        console.log("updatedTrip:",updatedTrip);
+        console.log("updatedTrip:", updatedTrip);
         if (updatedTrip) {
           const trip = await Trip.findOne({
             attributes: [
@@ -657,11 +657,12 @@ const changeStatus = async (req, res) => {
             SELECT user_id FROM Ticket WHERE trip_id = '${trip.dataValues.id}'
             `);
             const listUserId = ticket[0].map(item => item.user_id);
-            console.log(`\n\n\nlistUserId`, listUserId);
             pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
             const notification = {
               title: "F-Bus Notification",
               body: "Trip is checking-in, hurry up!",
+              dataTitle: "",
+              dataBody: "",
               sentTime: currentDate(),
             }
             const nofiticationData = createNotiObject(notification, listUserId);

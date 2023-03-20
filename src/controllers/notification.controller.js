@@ -67,7 +67,6 @@ const pushNoti = async (req, res) => {
   }
 };
 
-
 const createNotiObject = (notification, listUserId) => {
   const notiObject = [];
   listUserId.forEach((userId) => {
@@ -76,6 +75,8 @@ const createNotiObject = (notification, listUserId) => {
       user_id: userId,
       title: notification.title,
       body: notification.body,
+      dataTitle: notification.dataTitle,
+      dataBody: notification.dataBody,
       sentTime: currentDate(),
       createdAt: currentDate(),
       updatedAt: currentDate(),
@@ -84,9 +85,77 @@ const createNotiObject = (notification, listUserId) => {
   return notiObject;
 }
 
+const getAllNotification = async (req, res) => {
+  try {
+    const userLoginId = req.user_id;
+    const notifications = await Notification.findAll({
+      attributes: ['id', 'title', 'body', 'dataTitle', 'dataBody', 'sentTime', 'createdAt', 'updatedAt'],
+      where: {
+        user_id: userLoginId
+      },
+      order: [
+        ['sentTime', 'DESC']
+      ]
+    });
+    if (notifications == undefined) {
+      res.status(404).json({
+        status: "Fail",
+        message: "Notification not found!",
+      });
+    } else {
+      res.status(200).json({
+        status: "Success",
+        message: "Get notification successfully!",
+        data: notifications,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    })
+  }
+}
+
+const createNoti = async (req, res) => {
+  try {
+    const { title, body, dataTitle, dataBody, sentTime, userId } = req.body;
+    const notification = await Notification.create({
+      id: uuid(),
+      user_id: userId,
+      title: title,
+      body: body,
+      dataTitle: dataTitle,
+      dataBody: dataBody,
+      sentTime: sentTime,
+      createdAt: currentDate(),
+      updatedAt: currentDate(),
+    })
+    if (notification) {
+      res.status(201).json({
+        status: "Success",
+        message: "Create notification successfully!",
+        data: notification,
+      });
+    } else {
+      res.status(404).json({
+        status: "Fail",
+        message: "Create notification failed!",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    })
+  }
+}
+
 
 module.exports = {
   pushNoti,
   pushNotiByTopic,
-  createNotiObject
+  createNotiObject,
+  createNoti,
+  getAllNotification
 };
