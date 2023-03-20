@@ -172,7 +172,7 @@ module.exports = {
     },
 
     //Notification API
-    "/api/v1/notification": {
+    "/api/v1/notification/all": {
       ...getAllNotification
     },
     "/api/v1/notification/create": {
