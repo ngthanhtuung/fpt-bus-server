@@ -112,7 +112,7 @@ const createObjectTrip = async (
   return { trip, duplicates };
 };
 
-const checkExistedTrip = async (trip) => {
+const checkExistedTrip = async (trip, id) => {
   try {
     const existingTrip = await Trip.findOne({
       attributes: ["id"],
@@ -123,7 +123,7 @@ const checkExistedTrip = async (trip) => {
         departure_time: trip.departure_time
       }
     });
-    if (existingTrip) {
+    if (existingTrip && existingTrip.id !== id) {
       return true;
     } else {
       return false;
@@ -508,7 +508,7 @@ const updateTrip = async (req, res) => {
         departure_time,
         ticket_quantity
       };
-      const check = await checkExistedTrip(checkTrip);
+      const check = await checkExistedTrip(checkTrip, trip.id);
       if (check) {
         res.status(400).json({
           status: "Fail",
