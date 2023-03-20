@@ -26,7 +26,7 @@ const getDataChart = async (req, res) => {
         console.log("getAllTrip:", getAllTrip.length);
         const getAllTicketOfRoute = await sequelize.query(`
         SELECT sum(t.ticket_quantity) as TotalTicketOfRoute, r.id ,r.route_name
-        FROM route r inner join trip t on r.id = t.route_id and t.departure_date = '${date}'
+        FROM Route r inner join Trip t on r.id = t.route_id and t.departure_date = '${date}'
         GROUP BY r.id
         `)
         console.log("TotalTicket of Route:", getAllTicketOfRoute[0][0]);
