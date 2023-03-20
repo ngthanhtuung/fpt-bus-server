@@ -21,7 +21,7 @@ tripRouter.get("/:key", [authenticate, checkDataCache], getTripToday);
 tripRouter.get("/", [authenticate], getAllTrip);
 tripRouter.get("/search/:tripId", [authenticate], getAllTripById)
 tripRouter.post("/create", [authenticate, authorize(["ADMIN"])], createTrip);
-tripRouter.put("/update/:id", [authenticate, authorize(["ADMIN"])], updateTrip);
+tripRouter.put("/update/:id", [], updateTrip);
 tripRouter.put(
   "/change-status/:id",
   [authenticate, authorize(["ADMIN", "DRIVER"])],

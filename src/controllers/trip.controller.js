@@ -484,6 +484,7 @@ const updateTrip = async (req, res) => {
       ticket_quantity,
       status
     } = req.body;
+    console.log("body:",req.body);
     const trip = await Trip.findOne({
       attributes: [
         "id",
@@ -500,6 +501,7 @@ const updateTrip = async (req, res) => {
         id
       }
     });
+    console.log("trip:",trip);
     if (trip) {
       const checkTrip = {
         bus_id,
@@ -531,6 +533,7 @@ const updateTrip = async (req, res) => {
             }
           }
         );
+        console.log("updatedTrip:",updatedTrip);
         if (updatedTrip) {
           const trip = await Trip.findOne({
             attributes: [

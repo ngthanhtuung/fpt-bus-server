@@ -10,6 +10,7 @@ const tripRouter = require("./trip.router");
 const ticketRouter = require("./ticket.router");
 const checkInRouter = require("./checkin.router");
 const payRouter = require("./payment.router");
+const dataChartRouter = require("./dataChart.router");
 
 const rootRouter = Router();
 
@@ -24,5 +25,6 @@ rootRouter.use("/trip", tripRouter);
 rootRouter.use("/user", userRouter);
 rootRouter.use("/ticket", ticketRouter);
 rootRouter.use("/payment", payRouter);
+rootRouter.use("/data", dataChartRouter);
 
 module.exports = rootRouter;
