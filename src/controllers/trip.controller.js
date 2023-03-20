@@ -269,7 +269,7 @@ const getTripTodayForDriver = async (req, res) => {
     `);
     if (trips[0].length > 0) {
       await client.set(key, JSON.stringify(trips[0]), {
-        EX: 300,
+        EX: 60,
         NX: true
       });
       res.status(200).json({
@@ -306,7 +306,7 @@ const getTripTodayForStudent = async (req, res) => {
     `);
     if (trips[0].length > 0) {
       await client.set(key, JSON.stringify(trips[0]), {
-        EX: 600,
+        EX: 60,
         NX: true
       });
       res.status(200).json({
