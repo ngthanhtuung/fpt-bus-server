@@ -357,7 +357,7 @@ const cancelTicket = async (req, res) => {
                     id: ticket.trip_id
                 }
             })
-            if (trip.status === 1 || (isMoreThanMinutes(trip.departure_time, 15) === false)) {
+            if (trip.status === 1 && (isMoreThanMinutes(trip.departure_time, 15) === true)) {
                 ticket.status = false;
                 ticket.updatedAt = currentDate();
                 trip.ticket_quantity = trip.ticket_quantity + 1;

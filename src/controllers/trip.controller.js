@@ -21,7 +21,7 @@ const expiredTrip = async () => {
     const tripDate = moment.tz(trip.departure_date, 'YYYY-MM-DD', 'UTC').tz('Asia/Ho_Chi_Minh');
     const currentDate = moment().tz('Asia/Ho_Chi_Minh');
     if (tripDate.isBefore(currentDate, 'day')) {
-      trip.update({ status: 4 });
+      trip.update({ status: 3 });
     }
   });
 }
@@ -351,8 +351,8 @@ const getTripToday = async (req, res) => {
 
 //START MAIN METHOD
 const getAllTrip = async (req, res) => {
-
   const role = req.role_name;
+  await expiredTrip();
   switch (role) {
     case "ADMIN":
       await getTripForAdmin(req, res);
