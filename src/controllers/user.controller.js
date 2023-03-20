@@ -5,6 +5,7 @@ const { checkEmailDomain } = require("../utils/email.utils");
 const { v4: uuid } = require("uuid");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
+const { checkBusIsOperating } = require('../controllers/bus.controller');
 
 const validate = (fullname, email, phone_number) => {
   const errors = {};
@@ -346,6 +347,7 @@ const changeStatus = async (req, res) => {
     const id = req.params.id;
     const userLogin = req.user_id;
     const checkExistedUser = await Users.findByPk(id);
+    console.log("Check existed user: ", checkExistedUser);
     if (!checkExistedUser) {
       res.status(404).json({
         status: "Fail",
@@ -357,6 +359,7 @@ const changeStatus = async (req, res) => {
         messages: "You're loggin into the system. Operation denied!",
       });
     } else {
+
       const updatedUser = await Users.update(
         {
           status: !checkExistedUser.status,

@@ -4,7 +4,7 @@ const { authenticate, authorize } = require("../middlewares/auth/verify-token.mi
 
 const notiRouter = new Router();
 
-notiRouter.get("/", authenticate, getAllNotification);
+notiRouter.get("/all", authenticate, getAllNotification);
 notiRouter.post("/", authenticate, pushNoti);
 notiRouter.post("/create", [authenticate, authorize(['DRIVER'])], createNoti);
 
