@@ -5,8 +5,42 @@ const { generateQRCode } = require("../utils/qrCode")
 const { uploadQRCode } = require('./upload.controller');
 const { findClosestTime, isMoreThanMinutes } = require('../utils/time.utils')
 
+const expiredTicket = async (req, res) => {
+    try {
+        const userLoginId = req.user_id;
+        const tickets = await Ticket.findAll({
+            where: {
+                user_id: userLoginId,
+            }
+        })
+        for (const ticket of tickets) {
+            console.log(`\n\nTicket at expired: `, ticket)
+            const trip = await Trip.findOne({
+                where: {
+                    id: ticket.trip_id
+                }
+            })
+            if (isMoreThanMinutes(trip.departure_time, 0) === false) {
+                await Ticket.update({
+                    status: false
+                }, {
+                    where: {
+                        id: ticket.id
+                    }
+                })
+            }
+        }
+    } catch (err) {
+        return res.status(500).json({
+            status: "Fail",
+            message: err.message
+        })
+    }
+}
+
 const getAllTicket = async (req, res) => {
     try {
+        await expiredTicket(req, res);
         const userLoginId = req.user_id;
         const limit =
             !isNaN(Math.abs(parseInt(req.query.limit))) &&
@@ -267,6 +301,7 @@ const ticketReservation = async (req, res) => {
 
 const getTicketComing = async (req, res) => {
     try {
+        await expiredTicket(req, res);
         const userLoginId = req.user_id;
         const today = new Date().toISOString().slice(0, 10);
         const getTimes = await sequelize.query(`
