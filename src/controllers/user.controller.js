@@ -6,6 +6,7 @@ const { v4: uuid } = require("uuid");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 const { checkBusIsOperating } = require('../controllers/bus.controller');
+const { pushNotiByTopic } = require("./notification.controller");
 
 const validate = (fullname, email, phone_number) => {
   const errors = {};
@@ -531,10 +532,29 @@ const getWallet = async (req, res) => {
   }
 }
 
+const userPushNoti = async (req, res) => {
+  try {
+    const { title, content } = req.body
+    const { idUser } = req.params
+    pushNotiByTopic(`USER_${idUser}`, title, content);
+    console.log("checkPushNoti:", checkPushNoti);
+    res.status(200).json({
+      status: "Success",
+      message: "Sent notification for user successfully !!",
+    })
+  } catch (err) {
+    res.status(500).json({
+      status: "Fail",
+      message: err.message,
+    })
+  }
+}
+
 module.exports = {
   findAllUser,
   createUser,
   updateUser,
   changeStatus,
-  getWallet
+  getWallet,
+  userPushNoti
 };
