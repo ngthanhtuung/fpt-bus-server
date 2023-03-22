@@ -537,7 +537,6 @@ const userPushNoti = async (req, res) => {
     const { title, content } = req.body
     const { idUser } = req.params
     pushNotiByTopic(`USER_${idUser}`, title, content);
-    console.log("checkPushNoti:", checkPushNoti);
     res.status(200).json({
       status: "Success",
       message: "Sent notification for user successfully !!",
