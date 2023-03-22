@@ -631,7 +631,7 @@ const changeStatus = async (req, res) => {
       ]
     });
     if (trip) {
-      if (status !== 2) {
+      if ([1, 3, 6].includes(status)) {
         if (userRole === "ADMIN") {
           trip.status = status;
           trip.updatedDate = currentDate();
@@ -642,7 +642,8 @@ const changeStatus = async (req, res) => {
             message: "You don't have permission to do this action"
           });
         }
-      } else {
+      }
+      if ([2, 4, 5, 6].includes(status)) {
         if (userRole === "DRIVER") {
           if (isMoreThanMinutes(trip.departure_time, 15)) {
             return res.status(400).json({
