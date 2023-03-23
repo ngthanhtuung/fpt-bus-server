@@ -14,7 +14,6 @@ const expiredTicket = async (req, res) => {
             }
         })
         for (const ticket of tickets) {
-            console.log(`\n\nTicket at expired: `, ticket)
             const trip = await Trip.findOne({
                 where: {
                     id: ticket.trip_id
@@ -22,7 +21,7 @@ const expiredTicket = async (req, res) => {
             })
             if (isMoreThanMinutes(trip.departure_time, 0) === false) {
                 await Ticket.update({
-                    status: false
+                    status: 'EXPIRED'
                 }, {
                     where: {
                         id: ticket.id
@@ -211,7 +210,7 @@ const ticketReservation = async (req, res) => {
                         trip_id: tripId,
                         user_id: userLoginId,
                         qrUrl: "",
-                        status: true,
+                        status: 'BOOKING',
                         createdAt: currentDate(),
                         updatedAt: currentDate()
                     });
@@ -307,7 +306,7 @@ const getTicketComing = async (req, res) => {
         const getTimes = await sequelize.query(`
         SELECT Tr.departure_time
         FROM Ticket T INNER JOIN Trip Tr ON T.trip_id = Tr.id AND Tr.departure_date = '${today}'
-        WHERE T.user_id = '${userLoginId}';
+        WHERE T.user_id = '${userLoginId}' AND T.status = 'BOOKING';
         `)
         if (getTimes[0].length > 0) {
             let arrayTime = [];
@@ -393,7 +392,7 @@ const cancelTicket = async (req, res) => {
                 }
             })
             if (trip.status === 1 && (isMoreThanMinutes(trip.departure_time, 15) === true)) {
-                ticket.status = false;
+                ticket.status = 'CANCEL';
                 ticket.updatedAt = currentDate();
                 trip.ticket_quantity = trip.ticket_quantity + 1;
                 trip.updatedAt = currentDate();

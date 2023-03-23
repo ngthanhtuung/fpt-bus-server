@@ -38,7 +38,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM('SUCCESS', 'FAILED', 'PENDING'),
-        defaultValue: 'success',
+        defaultValue: 'SUCCESS',
         allowNull: false,
       },
       createdAt: {

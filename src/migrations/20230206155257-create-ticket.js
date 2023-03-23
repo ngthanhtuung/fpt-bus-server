@@ -35,8 +35,8 @@ module.exports = {
         allowNull: false
       },
       status: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
+        type: Sequelize.ENUM('BOOKING', 'CANCEL', 'EXPIRED', 'USED'),
+        defaultValue: 'BOOKING',
         allowNull: false
       },
       createdAt: {
