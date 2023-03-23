@@ -58,8 +58,8 @@ module.exports = {
                                             example: "https://firebasestorage.googleapis.com/v0/b/f-bus-system.appspot.com/o/qr-code%2Fqr-code-2023-03-09T12%3A47%3A30Z-06400300-bd98-43b2-bcec-d179863d5e3b?alt=media&token=ffec14a8-33d7-4c5d-933d-87bcba16b6ef",
                                         },
                                         status: {
-                                            type: "boolean",
-                                            example: true,
+                                            type: "enum",
+                                            example: 'BOOKING',
                                         },
                                         createdAt: {
                                             type: "string",

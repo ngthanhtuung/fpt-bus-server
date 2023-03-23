@@ -20,7 +20,6 @@ const checkInTicket = async (req, res) => {
             });
         }
         const trip = await Trip.findByPk(ticket.trip_id);
-        console.log("trip:", trip);
         if (trip == undefined) {
             return res.status(404).json({
                 status: "Fail",
@@ -28,10 +27,10 @@ const checkInTicket = async (req, res) => {
             });
         }
         if (trip.status === 2) {
-            if (ticket.status === true && ticket.checkInAt == null) {
+            if (ticket.status === 'BOOKING' && ticket.checkInAt == null) {
                 await Ticket.update(
                     {
-                        status: false,
+                        status: 'USED',
                         checkInAt: currentDate().slice(-8),
                         updatedAt: currentDate(),
                     },

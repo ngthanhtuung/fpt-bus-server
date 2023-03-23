@@ -12,8 +12,8 @@ module.exports = {
                 name: "status",
                 in: "query",
                 required: false,
-                description: "Ticket's status",
-                type: "boolean",
+                description: `Ticket's status: BOOKING, CANCEL, EXPIRED, USED`,
+                type: "enum",
             },
             {
                 name: "limit",
@@ -93,8 +93,8 @@ module.exports = {
                                         example: "https://firebasestorage.googleapis.com/v0/b/f-bus-system.appspot.com/o/qr-code%2Fqr-code-2023-03-09T17%3A59%3A44Z-17f118bb-efa9-4e98-9a20-ee9165fae23c?alt=media&token=c67de034-b009-472c-a944-0d5cc81db95c"
                                     },
                                     status: {
-                                        type: "boolean",
-                                        example: true
+                                        type: "enum",
+                                        example: 'BOOKING'
                                     },
                                     createdAt: {
                                         type: "string",

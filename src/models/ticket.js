@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       user_id: DataTypes.STRING,
       checkInAt: DataTypes.TIME,
       qrUrl: DataTypes.STRING,
-      status: DataTypes.BOOLEAN,
+      status: DataTypes.ENUM('BOOKING', 'CANCEL', 'EXPIRED', 'USED'),
     },
     {
       sequelize,
