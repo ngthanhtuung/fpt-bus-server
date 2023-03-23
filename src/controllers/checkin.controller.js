@@ -1,6 +1,7 @@
 const { Ticket, Trip, Wallet, Transaction } = require("../models");
 const currentDate = require("../utils/currentDate");
 const { v4: uuidv4 } = require('uuid');
+const { pushNotiByTopic } = require("./notification.controller");
 
 const checkInTicket = async (req, res) => {
     try {
@@ -55,6 +56,7 @@ const checkInTicket = async (req, res) => {
                     createdAt: currentDate(),
                     updatedAt: currentDate()
                 })
+                pushNotiByTopic(`USER_${ticket.user_id}`, 'FPT Bus Notification', 'Ticket check-in successfully');
                 return res.status(200).json({
                     status: "Success",
                     message: "Check in successfully",
