@@ -658,7 +658,7 @@ const changeStatus = async (req, res) => {
             SELECT user_id FROM Ticket WHERE trip_id = '${trip.dataValues.id}'
             `);
             const listUserId = ticket[0].map(item => item.user_id);
-            pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "F-Bus Notification", "Trip is checking-in, hurry up!");
+            pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "FPT Bus Notification", "Trip is checking-in, hurry up!");
             const notification = {
               title: "F-Bus Notification",
               body: "Trip is checking-in, hurry up!",
