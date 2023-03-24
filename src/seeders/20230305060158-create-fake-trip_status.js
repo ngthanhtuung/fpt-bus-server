@@ -14,35 +14,41 @@ module.exports = {
      */
     return queryInterface.bulkInsert("Trip_Status", [
       {
+        id: 1,
         status_name: "ACTIVE",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: "2023-03-18 01:13:40",
+        updatedAt: "2023-03-18 01:13:40"
       },
       {
+        id: 2,
         status_name: "CHECK-IN",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: "2023-03-18 01:13:40",
+        updatedAt: "2023-03-18 01:13:40"
       },
       {
+        id: 3,
         status_name: "DEACTIVATED",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: "2023-03-18 01:13:40",
+        updatedAt: "2023-03-18 01:13:40"
       },
       {
+        id: 4,
         status_name: "STARTED",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: "2023-03-18 01:13:40",
+        updatedAt: "2023-03-18 01:13:40"
       },
       {
+        id: 5,
         status_name: "FINISHED",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: "2023-03-18 01:13:40",
+        updatedAt: "2023-03-18 01:13:40"
       },
       {
+        id: 6,
         status_name: "CANCELED",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+        createdAt: "2023-03-18 01:13:40",
+        updatedAt: "2023-03-18 01:13:40"
+      }
     ]);
   },
 
