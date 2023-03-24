@@ -2,7 +2,7 @@ require("dotenv").config();
 const redis = require("redis");
 const client = redis.createClient(process.env.PORT_REDIS);
 const { v4: uuid } = require("uuid");
-const { Bus, Route, Trip, Users, sequelize, Notification } = require("../models");
+const { Bus, Route, Trip, Users, sequelize, Notification, Ticket, Wallet, Transaction } = require("../models");
 const { Op } = require("sequelize");
 const currentDate = require("../utils/currentDate");
 const { pushNotiByTopic, createNotiObject } = require('./notification.controller')
@@ -631,11 +631,59 @@ const changeStatus = async (req, res) => {
       ]
     });
     if (trip) {
+      console.log(`\n\nTrip present: `, trip.dataValues.status);
       if ([1, 3, 6].includes(status)) {
         if (userRole === "ADMIN") {
-          trip.status = status;
-          trip.updatedDate = currentDate();
-          await trip.save();
+          if (status === 3 || status === 6) {
+            trip.status = status;
+            trip.updatedAt = currentDate();
+            console.log(`\n\nCode running here`);
+            await trip.save();
+            pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "FPT Bus Notification", `Due to technical reasons, the trip ${trip.departure_date} - ${trip.departure_time}  was cancelled. I hope the students understand. Thank you`);
+            const tickets = await Ticket.findAll({
+              where: {
+                trip_id: trip.id
+              }
+            });
+            console.log(`\n\nTicket length: `, tickets.length);
+            if (tickets) {
+              for (let i = 0; i < tickets.length; i++) {
+                const ticket = tickets[i];
+                ticket.status = "CANCEL";
+                ticket.updatedAt = currentDate();
+                await ticket.save();
+                const wallet = await Wallet.findOne({
+                  where: {
+                    user_id: ticket.user_id
+                  }
+                })
+                wallet.balance = wallet.balance + 10;
+                wallet.updatedAt = currentDate();
+                await wallet.save();
+                await Transaction.create({
+                  id: uuid(),
+                  ticket_id: ticket.id,
+                  wallet_id: wallet.id,
+                  amount: 10,
+                  type: 'REFUND',
+                  status: 'SUCCESS',
+                  description: `Refund for trip ${trip.dataValues.id} successfully`,
+                  createdAt: currentDate(),
+                  updatedAt: currentDate()
+                })
+                const notification = {
+                  id: uuid(),
+                  title: "F-Bus Notification",
+                  body: `Due to technical reasons, the trip ${trip.departure_date} - ${trip.departure_time}  was cancelled. I hope the students understand. Thank you`,
+                  dataTitle: "",
+                  dataBody: "",
+                  user_id: ticket.user_id,
+                  sentTime: currentDate(),
+                }
+                await Notification.create(notification);
+              }
+            }
+          }
         } else {
           return res.status(400).json({
             status: "Fail",
@@ -643,7 +691,7 @@ const changeStatus = async (req, res) => {
           });
         }
       }
-      if ([2, 4, 5, 6].includes(status)) {
+      if ([2, 4, 5].includes(status)) {
         if (userRole === "DRIVER") {
           if (isMoreThanMinutes(trip.departure_time, 15)) {
             return res.status(400).json({
@@ -658,7 +706,7 @@ const changeStatus = async (req, res) => {
             SELECT user_id FROM Ticket WHERE trip_id = '${trip.dataValues.id}'
             `);
             const listUserId = ticket[0].map(item => item.user_id);
-            pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "FPT Bus Notification", "Trip is checking-in, hurry up!");
+            pushNotiByTopic(`TRIP_${trip.id}`, "FPT Bus Notification", "Trip is checking-in, hurry up!");
             const notification = {
               title: "F-Bus Notification",
               body: "Trip is checking-in, hurry up!",
