@@ -20,6 +20,7 @@ const getAllRoute = require("./Route/getAllRoute.docs");
 const getRouteById = require("./Route/getRouteById.docs");
 const createRoute = require("./Route/createRoute.docs");
 const changeStatusRoute = require("./Route/changeStatusRoute.docs");
+const countRouteOfStation = require("./Route/countRouteOfStation.docs");
 const updateRoute = require("./Route/updateRoute.docs");
 const getAllTrip = require("./Trip/getAllTrip.docs");
 const getTripById = require("./Trip/getTripById.docs");
@@ -121,6 +122,9 @@ module.exports = {
     },
     "/api/v1/route/change-status/{id}": {
       ...changeStatusRoute
+    },
+    "/api/v1/route/total/distances/{idRoute}": {
+      ...countRouteOfStation
     },
 
     //Trip API

@@ -1,8 +1,8 @@
 const { Route, Station, sequelize } = require("../models");
 const currentDate = require("../utils/currentDate");
 const { v4: uuid } = require("uuid");
-const { Op } = require("sequelize");
-
+const { Op, QueryTypes } = require("sequelize");
+const axios = require('axios');
 const getStationsBelongToRoute = async (routeId) => {
   try {
     const stations = await sequelize.query(
@@ -219,13 +219,13 @@ const updateRoute = async (req, res) => {
     const updatedStartName = (await Station.findByPk(start)).station_name;
     const updatedEndName = (await Station.findByPk(end)).station_name;
     const routeUpdate = await Route.findOne({
-      where:{
+      where: {
         id
       }
     })
-    let isDuplicated ;
-    if(routeUpdate.departure !==  updatedStartName && routeUpdate.destination !== updatedEndName){
-       isDuplicated = await isRouteDuplicated(route_name, updatedStartName, updatedEndName);
+    let isDuplicated;
+    if (routeUpdate.departure !== updatedStartName && routeUpdate.destination !== updatedEndName) {
+      isDuplicated = await isRouteDuplicated(route_name, updatedStartName, updatedEndName);
     }
     const route = await Route.findByPk(id);
     if (route) {
@@ -317,11 +317,74 @@ const changeStatus = async (req, res) => {
   }
 };
 
+const countRouteOfStation = async (req, res) => {
+  try {
+    //da8f9218-d941-488e-b78a-f499d038294b
+    const { idRoute } = req.params
+    //get detail route
+    const findRoute = await Route.findByPk(idRoute);
+    if (!findRoute) {
+      return res.status(404).json({
+        status: "Fail",
+        message: "Route not found",
+      });
+    }
+    //get name departure and destination
+    const { departure, destination } = findRoute;
+    //get latitude,longitude Departure
+    const findStationDeparture = await Station.findAll({
+      where: { station_name: departure }
+    });
+    console.log("findStationDeparture:", findStationDeparture);
+    //get latitude,longitude destination
+    const findStationDestination = await Station.findAll({
+      where: { station_name: destination }
+    });
+    console.log("findStationDestination:", findStationDestination);
+    let dataListStationOfRoute = await sequelize.query(`
+    SELECT s.station_name, s.latitude,s.longitude
+    FROM Route r inner join Route_Stations rs on r.id = rs.route_id inner join Station s on s.id = rs.station_id
+    WHERE r.id = '${idRoute}'
+    ORDER BY rs.station_index ASC
+    `, { type: QueryTypes.SELECT });
+    dataListStationOfRoute.unshift({ latitude: findStationDeparture[0].latitude, longitude: findStationDeparture[0].longitude })
+    dataListStationOfRoute.push({ latitude: findStationDestination[0].latitude, longitude: findStationDestination[0].longitude })
+    console.log("dataListStationOfRoute:", dataListStationOfRoute);
+    let totalDistance = 0;
+    let totalTime = 0;
+    for (let index = 0; index < dataListStationOfRoute.length - 1; index++) {
+      const origin = dataListStationOfRoute[index];
+      console.log("origin:", origin);
+      const destination = dataListStationOfRoute[index + 1];
+      console.log("destination:", destination);
+      const response = await axios.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=AIzaSyAcK2vRnmr7D3goiJxahkLwZN2-NNvAs0E`);
+      console.log("response.data.routes[0].legs[0].distance.text:", response.data.routes[0].legs[0].distance.text);
+      console.log("response.data.routes[0].legs[0].distance.text:", response.data.routes[0].legs[0].duration.text);
+      console.log("totalDistance:", totalDistance);
+      console.log("totalTime:", totalTime);
+      totalDistance += response.data.routes[0].legs[0].distance.value;
+      totalTime += response.data.routes[0].legs[0].duration.value;
+    }
+    res.status(200).json({
+      status: "Success",
+      data: {
+        TotalDistance: (totalDistance / 1000).toFixed(2) + 'km',
+        TotalTime: (totalTime / 60).toFixed(2) + "mins",
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "Fail",
+      message: error.message,
+    });
+  }
+}
 module.exports = {
   getAllRoutes,
   createRoute,
   updateRoute,
   changeStatus,
   getCoordinates,
-  getRouteById
+  getRouteById,
+  countRouteOfStation
 };
