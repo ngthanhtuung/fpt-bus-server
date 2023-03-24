@@ -631,13 +631,11 @@ const changeStatus = async (req, res) => {
       ]
     });
     if (trip) {
-      console.log(`\n\nTrip present: `, trip.dataValues.status);
       if ([1, 3, 6].includes(status)) {
         if (userRole === "ADMIN") {
-          if (status === 3 || status === 6) {
+          if ((status === 3 || status === 6) && trip.dataValues.status === 1) {
             trip.status = status;
             trip.updatedAt = currentDate();
-            console.log(`\n\nCode running here`);
             await trip.save();
             pushNotiByTopic(`TRIP_${trip.dataValues.id}`, "FPT Bus Notification", `Due to technical reasons, the trip ${trip.departure_date} - ${trip.departure_time}  was cancelled. I hope the students understand. Thank you`);
             const tickets = await Ticket.findAll({
@@ -645,10 +643,11 @@ const changeStatus = async (req, res) => {
                 trip_id: trip.id
               }
             });
-            console.log(`\n\nTicket length: `, tickets.length);
             if (tickets) {
+              let listUserId = [];
               for (let i = 0; i < tickets.length; i++) {
                 const ticket = tickets[i];
+                listUserId.push(ticket.user_id);
                 ticket.status = "CANCEL";
                 ticket.updatedAt = currentDate();
                 await ticket.save();
@@ -671,17 +670,16 @@ const changeStatus = async (req, res) => {
                   createdAt: currentDate(),
                   updatedAt: currentDate()
                 })
-                const notification = {
-                  id: uuid(),
-                  title: "F-Bus Notification",
-                  body: `Due to technical reasons, the trip ${trip.departure_date} - ${trip.departure_time}  was cancelled. I hope the students understand. Thank you`,
-                  dataTitle: "",
-                  dataBody: "",
-                  user_id: ticket.user_id,
-                  sentTime: currentDate(),
-                }
-                await Notification.create(notification);
               }
+              const notification = {
+                title: "F-Bus Notification",
+                body: `Due to technical reasons, the trip ${trip.departure_date} - ${trip.departure_time}  was cancelled. I hope the students understand. Thank you`,
+                dataTitle: "",
+                dataBody: "",
+                sentTime: currentDate(),
+              }
+              const nofiticationData = createNotiObject(notification, listUserId);
+              await Notification.bulkCreate(nofiticationData);
             }
           }
         } else {
@@ -706,10 +704,22 @@ const changeStatus = async (req, res) => {
             SELECT user_id FROM Ticket WHERE trip_id = '${trip.dataValues.id}'
             `);
             const listUserId = ticket[0].map(item => item.user_id);
-            pushNotiByTopic(`TRIP_${trip.id}`, "FPT Bus Notification", "Trip is checking-in, hurry up!");
+            let bodyNoti = "";
+            switch (status) {
+              case 2:
+                bodyNoti = "Trip is checking-in, hurry up!"
+                break;
+              case 4:
+                bodyNoti = "Trip started! Wish you a safe trip"
+                break;
+              case 5:
+                bodyNoti = "Trip finished! See you later"
+                break;
+            }
+            pushNotiByTopic(`TRIP_${trip.id}`, "FPT Bus Notification", bodyNoti);
             const notification = {
               title: "F-Bus Notification",
-              body: "Trip is checking-in, hurry up!",
+              body: bodyNoti,
               dataTitle: "",
               dataBody: "",
               sentTime: currentDate(),
