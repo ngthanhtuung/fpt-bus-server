@@ -20,9 +20,9 @@ Currently at FPT University, there is a bus service to help students, lecturers,
 
 ## Main Features
 
-- *Route management**:
+- **Route management**:
 - **Schedule management**:
 - **Booking**:
-- **Top-up**:
+- **Top-up to wallet**:
 
 ---
