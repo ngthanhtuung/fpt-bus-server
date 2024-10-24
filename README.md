@@ -1,11 +1,11 @@
 # FPT Bus Management System
 
 ## Members
-- **Ngô Xuân Thiệp**: Mobile Developer (Leader) - FPT University
-- **Đoàn Vũ Quang Huy**: Back-end Developer - FPT University
-- **Nguyễn Thanh Tùng**: Back-end Developer, Tester - FPT University
-- **Nguyễn Trọng Nguyên Vũ**: Front-end Developer - FPT University
-- **Nguyễn Quốc Sỹ**: Front-end Developer - FPT University
+- **Ngô Xuân Thiệp**: Mobile Developer (Leader)
+- **Đoàn Vũ Quang Huy**: Back-end Developer
+- **Nguyễn Thanh Tùng**: Back-end Developer, Tester
+- **Nguyễn Trọng Nguyên Vũ**: Front-end Developer
+- **Nguyễn Quốc Sỹ**: Front-end Developer
 
 ## Background
 
@@ -13,7 +13,7 @@ Currently at FPT University, there is a bus service to help students, lecturers,
 
 ## Technology Used
 
-- **Programming Languages**: Javascript, NodeJS, Dart
+- **Programming Languages**: Javascript, NodeJS
 - **Frameworks**: ReactJS, Flutter
 - **Databases**: MySQL
 - **Other Tools**: AWS, Firebase, Google Map API
